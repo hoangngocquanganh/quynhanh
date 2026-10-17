@@ -1,0 +1,10 @@
+{
+  "name": "Thám tử hai thì",
+  "short_name": "Quynhanh",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#eaf6ff",
+  "theme_color": "#3a86ff",
+  "description": "Bài học tiếng Anh lớp 4 về Hiện tại đơn và Hiện tại tiếp diễn.",
+  "icons": []
+}
