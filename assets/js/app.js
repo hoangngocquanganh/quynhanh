@@ -1,5 +1,6 @@
 (function () {
   const STORAGE_KEY = "quynhanh-custom-questions";
+  const MASTER_KEY = "quynhanh-mastery";
   const scratch = {
     soundOn: true,
     flashIdx: 0,
@@ -15,8 +16,22 @@
     gameQuestions: [],
     turnIndex: 0,
     currentQuestion: null,
-    totalGameQuestions: 0
+    totalGameQuestions: 0,
+    mastery: {
+      signals: {},
+      structs: {}
+    }
   };
+
+  // load mastery from localStorage if present
+  try {
+    const saved = JSON.parse(localStorage.getItem(MASTER_KEY) || "null");
+    if (saved && typeof saved === 'object') scratch.mastery = saved;
+  } catch (e) { /* ignore */ }
+
+  function saveMastery() {
+    try { localStorage.setItem(MASTER_KEY, JSON.stringify(scratch.mastery)); } catch {}
+  }
 
   function shuffle(arr) {
     const a = arr.slice();
@@ -115,6 +130,23 @@
       html = html.replace(re, (m) => `<span class="sig ${cls}">${m}</span>`);
     }
     return html;
+  }
+
+  function recordMastery(q, correct) {
+    if (!q) return;
+    if (q.signal) {
+      const key = q.signal;
+      const s = scratch.mastery.signals[key] || { asked: 0, correct: 0 };
+      s.asked += 1;
+      if (correct) s.correct += 1;
+      scratch.mastery.signals[key] = s;
+    }
+    const struct = q.tense || 'other';
+    const st = scratch.mastery.structs[struct] || { asked: 0, correct: 0 };
+    st.asked += 1;
+    if (correct) st.correct += 1;
+    scratch.mastery.structs[struct] = st;
+    saveMastery();
   }
 
   function renderSignalChips() {
@@ -218,7 +250,7 @@
     function createOptions(opts) {
       const optionsWrap = document.createElement("div");
       optionsWrap.className = "options";
-      opts.forEach((option, index) => {
+      (opts || []).forEach((option, index) => {
         const button = document.createElement("button");
         button.type = "button";
         button.className = "opt-btn";
@@ -236,6 +268,9 @@
           const isCorrect = (typeof q.answer === 'number') ? (index === q.answer) : false;
           if (!isCorrect) button.classList.add("wrong");
           q.userAnswer = index;
+
+          // record mastery
+          recordMastery(q, isCorrect);
 
           if (isCorrect) { playSfx("correct"); toast("Đúng rồi!"); }
           else { playSfx("wrong"); toast("Sai rồi — xem giải thích dưới đây."); }
@@ -279,8 +314,12 @@
               // check answer
               const given = currentAnswer.join(" ");
               const correct = (q.sentence || q.correct || q.answerText || "").replace(/\s+/g, " ").trim();
-              q.userAnswer = given;
               const isCorrect = given.trim() === correct.trim();
+              q.userAnswer = given;
+
+              // record mastery
+              recordMastery(q, isCorrect);
+
               if (isCorrect) { playSfx("correct"); toast("Đúng rồi!"); }
               else { playSfx("wrong"); toast("Sai rồi!"); }
               const feedback = document.createElement("div");
@@ -295,8 +334,20 @@
         });
       }
 
+      // reset button
+      const resetBtn = document.createElement('button');
+      resetBtn.type = 'button';
+      resetBtn.className = 'btn ghost';
+      resetBtn.textContent = 'Đặt lại';
+      resetBtn.addEventListener('click', () => {
+        currentAnswer.length = 0;
+        answerLine.textContent = '(Chọn từ theo thứ tự)';
+        bank.querySelectorAll('.word-chip').forEach(c => { c.disabled = false; });
+      });
+
       renderWords();
       qEl.appendChild(answerLine);
+      qEl.appendChild(resetBtn);
       qEl.appendChild(bank);
     } else if (q.type === "fix") {
       // show wrong sentence and options of corrections
@@ -304,7 +355,7 @@
       wrong.className = "ex-line";
       wrong.innerHTML = esc(q.wrong || q.sentence || "");
       qEl.appendChild(wrong);
-      if (q.options && q.options.length) {
+      if (Array.isArray(q.options) && q.options.length) {
         qEl.appendChild(createOptions(q.options));
       }
     } else if (q.type === "picture") {
@@ -313,7 +364,7 @@
       sceneWrap.className = "scene-box";
       sceneWrap.innerHTML = q.scene || "";
       qEl.appendChild(sceneWrap);
-      if (q.options && q.options.length) qEl.appendChild(createOptions(q.options));
+      if (Array.isArray(q.options) && q.options.length) qEl.appendChild(createOptions(q.options));
     } else if (q.type === "listen") {
       // show listen button and options
       const btn = document.createElement("button");
@@ -325,10 +376,10 @@
         speak(q.audioText || q.sentence || "");
       });
       qEl.appendChild(btn);
-      if (q.options && q.options.length) qEl.appendChild(createOptions(q.options));
+      if (Array.isArray(q.options) && q.options.length) qEl.appendChild(createOptions(q.options));
     } else {
       // default: choose / classify / conjugate / hunt
-      if (q.options && q.options.length) qEl.appendChild(createOptions(q.options));
+      if (Array.isArray(q.options) && q.options.length) qEl.appendChild(createOptions(q.options));
     }
 
     container.appendChild(qEl);
@@ -537,7 +588,7 @@
       function attachGameOptions(opts) {
         const optionsWrap = document.createElement('div');
         optionsWrap.className = 'options';
-        opts.forEach((option, index) => {
+        (opts || []).forEach((option, index) => {
           const button = document.createElement('button');
           button.type = 'button';
           button.className = 'opt-btn';
@@ -553,6 +604,9 @@
               if (rightBtn) rightBtn.classList.add('right');
             }
             if (!isCorrect) chosenBtn.classList.add('wrong');
+
+            // record mastery
+            recordMastery(q, isCorrect);
 
             // scoring
             if (isCorrect) {
@@ -581,23 +635,58 @@
         sceneWrap.className = 'scene-box';
         sceneWrap.innerHTML = q.scene || '';
         qb.appendChild(sceneWrap);
-        if (q.options && q.options.length) attachGameOptions(q.options);
+        if (Array.isArray(q.options) && q.options.length) attachGameOptions(q.options);
       } else if (q.type === 'listen') {
         const btn = document.createElement('button');
         btn.className = 'speak-btn'; btn.type = 'button'; btn.textContent = 'Nghe câu';
         btn.addEventListener('click', () => { playSfx('click'); speak(q.audioText || q.sentence || ''); });
         qb.appendChild(btn);
-        if (q.options && q.options.length) attachGameOptions(q.options);
+        if (Array.isArray(q.options) && q.options.length) attachGameOptions(q.options);
       } else if (q.type === 'arrange') {
-        // simplified: show words and expect teacher to check (or user clicks order)
+        // simplified: show words and allow team to click order and press Hoàn tất to auto-chấm
+        const answerLine = document.createElement('div'); answerLine.className = 'answer-line'; answerLine.textContent = '(Chọn từ theo thứ tự)';
         const bank = document.createElement('div'); bank.className = 'word-bank';
-        (q.words || []).forEach((w, i) => {
-          const chip = document.createElement('button'); chip.type = 'button'; chip.className = 'word-chip'; chip.textContent = w;
-          bank.appendChild(chip);
+        const words = (q.words || []).slice();
+        const currentAnswer = [];
+
+        function renderWordsGame() {
+          bank.innerHTML = '';
+          words.forEach((w, i) => {
+            const chip = document.createElement('button'); chip.type = 'button'; chip.className = 'word-chip'; chip.textContent = w;
+            chip.addEventListener('click', () => {
+              currentAnswer.push(w);
+              chip.disabled = true;
+              answerLine.textContent = currentAnswer.join(' ');
+            });
+            bank.appendChild(chip);
+          });
+        }
+        const finishBtn = document.createElement('button'); finishBtn.type = 'button'; finishBtn.className = 'btn teal'; finishBtn.textContent = 'Hoàn tất';
+        finishBtn.addEventListener('click', () => {
+          const given = currentAnswer.join(' ');
+          const correct = (q.sentence || q.correct || '').replace(/\s+/g, ' ').trim();
+          const isCorrect = given.trim() === correct.trim();
+          // record mastery
+          recordMastery(q, isCorrect);
+          if (isCorrect) {
+            const timeLeft = Number(document.getElementById('timer-num').textContent || 0);
+            const base = 10; let bonus = 0; const maxBonusWindow = 6;
+            if (timeLeft >= (getTimerForType(q.type) - maxBonusWindow)) bonus = 5;
+            const team = scratch.gameTeams[scratch.turnIndex % scratch.gameTeams.length];
+            team.score += base + bonus;
+            playSfx('correct'); toast(`Đúng! +${base + bonus} điểm`);
+          } else { playSfx('wrong'); toast('Sai rồi!'); }
+          document.getElementById('game-next').classList.remove('hidden');
+          renderScoreBoard(scratch.gameTeams);
+          // disable remaining chips
+          bank.querySelectorAll('.word-chip').forEach(c => c.disabled = true);
         });
+
+        renderWordsGame();
+        qb.appendChild(answerLine);
+        qb.appendChild(finishBtn);
         qb.appendChild(bank);
-        // no automatic scoring for arrange in game mode for now
-      } else if (q.options && q.options.length) {
+      } else if (Array.isArray(q.options) && q.options.length) {
         attachGameOptions(q.options);
       }
 
@@ -628,6 +717,8 @@
       }, 1000);
 
       renderScoreBoard(scratch.gameTeams);
+      // focus first option if present
+      const firstOpt = gameBody.querySelector('.opt-btn'); if (firstOpt) firstOpt.focus();
     };
 
     const finishGame = () => {
@@ -636,8 +727,20 @@
       document.getElementById("game-play").classList.add("hidden");
       gameEnd.classList.remove("hidden");
       document.getElementById("winner-name").textContent = winner.name;
+
+      // mastery summary (top 5 worst signals)
+      const masteryDiv = document.createElement('div'); masteryDiv.className = 'card';
+      masteryDiv.innerHTML = '<h3>Thống kê lỗi theo dấu hiệu</h3>';
+      const list = Object.entries(scratch.mastery.signals || {}).map(([k, v]) => ({ k, asked: v.asked || 0, correct: v.correct || 0 })).filter(x => x.asked > 0).map(x => ({...x, acc: x.correct / x.asked})).sort((a,b) => a.acc - b.acc);
+      const tableHtml = list.length ? `<ol>${list.slice(0,5).map(x => `<li>${esc(x.k)} — ${x.correct}/${x.asked} đúng</li>`).join('')}</ol>` : '<p class="sub">Chưa có dữ liệu</p>';
+      masteryDiv.innerHTML += tableHtml;
+
       const summary = document.getElementById("game-summary");
       summary.innerHTML = `<thead><tr><th>Đội</th><th>Điểm</th></tr></thead><tbody>${scratch.gameTeams.map((t) => `<tr><td>${esc(t.name)}</td><td>${t.score}</td></tr>`).join("")}</tbody>`;
+      // insert masteryDiv above summary
+      const playArea = document.getElementById('game-end');
+      if (playArea) playArea.insertBefore(masteryDiv, summary);
+
       playSfx("win");
     };
 
@@ -752,6 +855,25 @@
     });
   }
 
+  function initKeyboardShortcuts() {
+    document.addEventListener('keydown', (e) => {
+      const active = document.activeElement; if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.tagName === 'SELECT')) return;
+      // number keys 1-9 to pick visible options
+      if (/^[1-9]$/.test(e.key)) {
+        const idx = Number(e.key) - 1;
+        const opts = document.querySelectorAll('.options .opt-btn:not([disabled])');
+        if (opts && opts[idx]) { opts[idx].click(); }
+      }
+      if (e.key === 'Enter') {
+        // if practice next is visible -> next
+        const pNext = document.getElementById('practice-next');
+        if (pNext && !pNext.classList.contains('hidden')) { pNext.click(); }
+        const gNext = document.getElementById('game-next');
+        if (gNext && !gNext.classList.contains('hidden')) { gNext.click(); }
+      }
+    });
+  }
+
   function initFlashNavigation() {
     const flash = document.getElementById("flash");
     const prev = document.getElementById("flash-prev");
@@ -783,6 +905,7 @@
     initSoundToggle();
     initSpeech();
     initFlashNavigation();
+    initKeyboardShortcuts();
     window.toast = toast;
     window.playSfx = playSfx;
     window.speak = speak;
@@ -797,6 +920,7 @@
     highlightSignals,
     getCustomQuestions,
     saveCustomQuestions,
-    esc
+    esc,
+    recordMastery
   };
 })();
