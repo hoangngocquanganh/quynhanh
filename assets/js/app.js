@@ -14,7 +14,8 @@
     gameTeams: [],
     gameQuestions: [],
     turnIndex: 0,
-    currentQuestion: null
+    currentQuestion: null,
+    totalGameQuestions: 0
   };
 
   function shuffle(arr) {
@@ -42,6 +43,10 @@
       .replace(/>/g, "&gt;")
       .replace(/\"/g, "&quot;")
       .replace(/'/g, "&#039;");
+  }
+
+  function escapeRegex(str) {
+    return String(str).replace(/[.*+?^${}()|[\\]\\]/g, "\\$&");
   }
 
   function speak(text) {
@@ -97,14 +102,17 @@
   }
 
   function highlightSignals(sentence) {
-    const output = esc(sentence);
-    const signals = [...(window.SIGNAL_DEMO?.simple || []), ...(window.SIGNAL_DEMO?.cont || [])]
-      .sort((a, b) => b[0].length - a[0].length);
+    // Build an array of [signal, classChar] where classChar is 's' or 'c'
+    const simple = (window.SIGNAL_DEMO?.simple || []).map(([s]) => [s, 's']);
+    const cont = (window.SIGNAL_DEMO?.cont || []).map(([s]) => [s, 'c']);
+    const signals = simple.concat(cont).sort((a, b) => b[0].length - a[0].length);
 
-    let html = output;
+    let html = esc(String(sentence || ''));
     for (const [sig, cls] of signals) {
-      const reg = new RegExp(esc(sig).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi");
-      html = html.replace(reg, (match) => `<span class="sig ${cls === "simple" ? "s" : "c"}">${match}</span>`);
+      if (!sig) continue;
+      const safe = escapeRegex(sig);
+      const re = new RegExp(safe, "gi");
+      html = html.replace(re, (m) => `<span class="sig ${cls}">${m}</span>`);
     }
     return html;
   }
@@ -160,7 +168,7 @@
     const current = cards[scratch.flashIdx];
 
     frontText.innerHTML = highlightSignals(current.s);
-    backFace.innerHTML = `<span class="tense-tag">${current.tense === "simple" ? "Hiện tại đơn" : "Hiện tại tiếp diễn"}</span><span class="hintline">Dấu hiệu: ${current.signal}</span><span class="hintline">Cấu trúc: ${current.struct}</span>`;
+    backFace.innerHTML = `<span class="tense-tag">${current.tense === "simple" ? "Hiện tại đơn" : "Hiện tại tiếp diễn"}</span><span class="hintline">Dấu hiệu: ${esc(current.signal)}</span><span class="hintline">Cấu trúc: ${esc(current.struct)}</span>`;
     count.textContent = `Thẻ ${scratch.flashIdx + 1} / ${cards.length}`;
     if (flash) flash.classList.remove("flipped");
   }
@@ -194,6 +202,138 @@
     return scratch.currentPractice;
   }
 
+  // Generic renderer for a single question (practice)
+  function renderQuestion(q, container) {
+    container.innerHTML = "";
+    const qEl = document.createElement("div");
+    qEl.className = "question-box";
+
+    const heading = document.createElement("div");
+    heading.className = "question-title";
+    const sentence = q.sentence || q.question || q.signal || "";
+    heading.innerHTML = highlightSignals(sentence);
+    qEl.appendChild(heading);
+
+    // helper to create options grid and attach click handler
+    function createOptions(opts) {
+      const optionsWrap = document.createElement("div");
+      optionsWrap.className = "options";
+      opts.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "opt-btn";
+        button.textContent = option;
+        button.dataset.index = String(index);
+        button.addEventListener("click", () => {
+          // disable all buttons
+          optionsWrap.querySelectorAll(".opt-btn").forEach((btn) => btn.disabled = true);
+          // mark correct
+          if (typeof q.answer === 'number') {
+            const rightBtn = optionsWrap.querySelector(`[data-index="${q.answer}"]`);
+            if (rightBtn) rightBtn.classList.add("right");
+          }
+          // mark chosen wrong if needed
+          const isCorrect = (typeof q.answer === 'number') ? (index === q.answer) : false;
+          if (!isCorrect) button.classList.add("wrong");
+          q.userAnswer = index;
+
+          if (isCorrect) { playSfx("correct"); toast("Đúng rồi!"); }
+          else { playSfx("wrong"); toast("Sai rồi — xem giải thích dưới đây."); }
+
+          const feedback = document.createElement("div");
+          feedback.className = `feedback show ${isCorrect ? "ok" : "no"}`;
+          feedback.innerHTML = `<strong>${isCorrect ? "Đúng" : "Sai"}</strong><br>${q.signal ? `Dấu hiệu: <strong>${esc(q.signal)}</strong> → dùng <strong>${q.tense === "simple" ? "Hiện tại đơn" : "Hiện tại tiếp diễn"}</strong>.` : "" }<br><span class="hintline">Công thức: ${q.tense === "simple" ? "S + V / V-s / V-es" : "S + am / is / are + V-ing"}</span>`;
+          qEl.appendChild(feedback);
+          const nextBtn = document.getElementById("practice-next");
+          if (nextBtn) nextBtn.classList.remove("hidden");
+        });
+        optionsWrap.appendChild(button);
+      });
+      return optionsWrap;
+    }
+
+    // Render by type
+    if (q.type === "arrange") {
+      // words: clickable chips that append to answer area
+      const answerLine = document.createElement("div");
+      answerLine.className = "answer-line";
+      answerLine.textContent = "(Chọn từ theo thứ tự)";
+      const bank = document.createElement("div");
+      bank.className = "word-bank";
+
+      const words = (q.words || []).slice();
+      const currentAnswer = [];
+
+      function renderWords() {
+        bank.innerHTML = "";
+        words.forEach((w, i) => {
+          const chip = document.createElement("button");
+          chip.className = "word-chip";
+          chip.type = "button";
+          chip.textContent = w;
+          chip.addEventListener("click", () => {
+            currentAnswer.push(w);
+            chip.disabled = true;
+            answerLine.textContent = currentAnswer.join(" ");
+            if (currentAnswer.length === (q.words || []).length) {
+              // check answer
+              const given = currentAnswer.join(" ");
+              const correct = (q.sentence || q.correct || q.answerText || "").replace(/\s+/g, " ").trim();
+              q.userAnswer = given;
+              const isCorrect = given.trim() === correct.trim();
+              if (isCorrect) { playSfx("correct"); toast("Đúng rồi!"); }
+              else { playSfx("wrong"); toast("Sai rồi!"); }
+              const feedback = document.createElement("div");
+              feedback.className = `feedback show ${isCorrect ? "ok" : "no"}`;
+              feedback.innerHTML = `<strong>${isCorrect ? "Đúng" : "Sai"}</strong><br><span class="hintline">Đáp án: ${esc(correct)}</span>`;
+              qEl.appendChild(feedback);
+              const nextBtn = document.getElementById("practice-next");
+              if (nextBtn) nextBtn.classList.remove("hidden");
+            }
+          });
+          bank.appendChild(chip);
+        });
+      }
+
+      renderWords();
+      qEl.appendChild(answerLine);
+      qEl.appendChild(bank);
+    } else if (q.type === "fix") {
+      // show wrong sentence and options of corrections
+      const wrong = document.createElement("div");
+      wrong.className = "ex-line";
+      wrong.innerHTML = esc(q.wrong || q.sentence || "");
+      qEl.appendChild(wrong);
+      if (q.options && q.options.length) {
+        qEl.appendChild(createOptions(q.options));
+      }
+    } else if (q.type === "picture") {
+      // insert scene (SVG) then options
+      const sceneWrap = document.createElement("div");
+      sceneWrap.className = "scene-box";
+      sceneWrap.innerHTML = q.scene || "";
+      qEl.appendChild(sceneWrap);
+      if (q.options && q.options.length) qEl.appendChild(createOptions(q.options));
+    } else if (q.type === "listen") {
+      // show listen button and options
+      const btn = document.createElement("button");
+      btn.className = "speak-btn";
+      btn.type = "button";
+      btn.textContent = "Nghe câu";
+      btn.addEventListener("click", () => {
+        playSfx("click");
+        speak(q.audioText || q.sentence || "");
+      });
+      qEl.appendChild(btn);
+      if (q.options && q.options.length) qEl.appendChild(createOptions(q.options));
+    } else {
+      // default: choose / classify / conjugate / hunt
+      if (q.options && q.options.length) qEl.appendChild(createOptions(q.options));
+    }
+
+    container.appendChild(qEl);
+  }
+
   function renderPractice() {
     const play = document.getElementById("practice-play");
     const start = document.getElementById("practice-start");
@@ -219,54 +359,12 @@
     dots.innerHTML = "";
     scratch.currentPractice.forEach((_, i) => {
       const dot = document.createElement("span");
-      dot.classList.toggle("done", i <= scratch.practiceIdx);
+      dot.classList.toggle("done", i < scratch.practiceIdx);
       dots.appendChild(dot);
     });
 
-    const qEl = document.createElement("div");
-    qEl.className = "question-box";
-
-    const heading = document.createElement("div");
-    heading.className = "question-title";
-    const sentence = q.sentence || q.question || q.signal;
-    heading.innerHTML = highlightSignals(sentence);
-    qEl.appendChild(heading);
-
-    const optionsWrap = document.createElement("div");
-    optionsWrap.className = "options";
-
-    q.options.forEach((option, index) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "opt-btn";
-      button.textContent = option;
-      button.addEventListener("click", () => {
-        const isCorrect = index === q.answer;
-        document.querySelectorAll(".opt-btn").forEach((btn) => {
-          btn.disabled = true;
-          if (Number(btn.dataset.index) === q.answer) btn.classList.add("right");
-        });
-        if (isCorrect) {
-          playSfx("correct");
-          toast("Đúng rồi!");
-        } else {
-          playSfx("wrong");
-          toast("Sai rồi — xem giải thích dưới đây.");
-        }
-
-        const feedback = document.createElement("div");
-        feedback.className = `feedback show ${isCorrect ? "ok" : "no"}`;
-        feedback.innerHTML = `<strong>${isCorrect ? "Đúng" : "Sai"}</strong><br>${q.signal ? `Dấu hiệu: <strong>${esc(q.signal)}</strong> → dùng <strong>${q.tense === "simple" ? "Hiện tại đơn" : "Hiện tại tiếp diễn"}</strong>.` : "Câu này nên dùng thì phù hợp với hành động."}<br><span class="hintline">Công thức: ${q.tense === "simple" ? "S + V / V-s / V-es" : "S + am / is / are + V-ing"}</span>`;
-        qEl.appendChild(feedback);
-        document.getElementById("practice-next").classList.remove("hidden");
-      });
-      button.dataset.index = String(index);
-      optionsWrap.appendChild(button);
-    });
-
-    qEl.appendChild(optionsWrap);
-    body.innerHTML = "";
-    body.appendChild(qEl);
+    // render the question generically
+    renderQuestion(q, body);
     document.getElementById("practice-next").classList.add("hidden");
   }
 
@@ -282,7 +380,13 @@
     result.classList.remove("hidden");
     body.innerHTML = "";
 
-    const correctCount = scratch.currentPractice.filter((q, i) => q.userAnswer === q.answer).length;
+    const correctCount = scratch.currentPractice.filter((q, i) => {
+      if (typeof q.answer === 'number') return q.userAnswer === q.answer;
+      // for arrange/fix types where userAnswer might be string
+      if (q.type === 'arrange') return String(q.userAnswer || '').trim() === String(q.sentence || q.correct || '').trim();
+      return false;
+    }).length;
+
     score.textContent = `${correctCount}/${scratch.currentPractice.length}`;
     verdict.textContent = correctCount >= 7 ? "Tuyệt vời!" : correctCount >= 5 ? "Khá tốt!" : "Cần ôn lại nhé!";
 
@@ -290,7 +394,8 @@
     scratch.currentPractice.forEach((q, i) => {
       const item = document.createElement("div");
       item.className = "custom-item";
-      item.innerHTML = `<span>${i + 1}. ${esc(q.sentence || q.signal)} — ${q.userAnswer === q.answer ? "✅" : "❌"}</span>`;
+      const right = typeof q.answer === 'number' ? (q.userAnswer === q.answer) : (q.type === 'arrange' ? (String(q.userAnswer || '').trim() === String(q.sentence || q.correct || '').trim()) : false);
+      item.innerHTML = `<span>${i + 1}. ${esc(q.sentence || q.signal || '')} — ${right ? "✅" : "❌"}</span>`;
       review.appendChild(item);
     });
   }
@@ -299,14 +404,9 @@
     const current = scratch.currentPractice[scratch.practiceIdx];
     if (!current) return;
 
-    const selected = document.querySelector(".opt-btn.right, .opt-btn.wrong");
-    if (!selected) {
+    // if user didn't pick anything, mark -1
+    if (current.userAnswer === undefined) {
       current.userAnswer = -1;
-    }
-
-    const chosen = document.querySelector(".opt-btn.right") || document.querySelector(".opt-btn.wrong");
-    if (chosen) {
-      current.userAnswer = Number(chosen.dataset.index);
     }
 
     scratch.practiceIdx += 1;
@@ -389,7 +489,7 @@
       teams.forEach((team, index) => {
         const item = document.createElement("div");
         item.className = "score-card";
-        item.innerHTML = `<div class="t-name">${team.name}</div><div class="t-score">${team.score}</div>`;
+        item.innerHTML = `<div class="t-name">${esc(team.name)}</div><div class="t-score">${team.score}</div>`;
         if (index === scratch.turnIndex) item.style.borderColor = "#ef476f";
         board.appendChild(item);
       });
@@ -398,10 +498,17 @@
     const startGame = () => {
       scratch.gameTeams = getTeams();
       scratch.gameQuestions = shuffle((window.QUESTION_BANK || []).slice());
+      scratch.totalGameQuestions = scratch.gameQuestions.length;
       scratch.turnIndex = 0;
       setup.classList.add("hidden");
       gamePlay.classList.remove("hidden");
       showCurrentQuestion();
+    };
+
+    const getTimerForType = (type) => {
+      if (type === 'arrange') return 30;
+      if (type === 'listen') return 20;
+      return 15;
     };
 
     const showCurrentQuestion = () => {
@@ -412,28 +519,102 @@
       scratch.currentQuestion = scratch.gameQuestions.shift();
       const team = scratch.gameTeams[scratch.turnIndex % scratch.gameTeams.length];
       const q = scratch.currentQuestion;
-      progress.textContent = `Câu ${Math.max(1, 1 + (scratch.gameTeams.length * 3) - scratch.gameQuestions.length)} / ${Math.max(1, scratch.gameTeams.length * 3)}`;
+      const questionNumber = scratch.totalGameQuestions - scratch.gameQuestions.length;
+      progress.textContent = `Câu ${questionNumber} / ${scratch.totalGameQuestions}`;
       turnBanner.textContent = `Lượt của ${team.name}`;
       gameBadge.textContent = q.tense === "simple" ? "Hiện tại đơn" : "Hiện tại tiếp diễn";
-      gameBody.innerHTML = `
-        <div class="question-box">
-          <div class="question-title">${highlightSignals(q.sentence || q.signal)}</div>
-          <div class="options">
-            ${q.options.map((option, index) => `<button class="opt-btn" data-qindex="${index}" type="button">${option}</button>`).join("")}
-          </div>
-        </div>
-      `;
-      timerFill.style.width = "100%";
-      timerNum.textContent = "15";
-      let remaining = 15;
+
+      // render question into gameBody using same renderQuestion logic
+      gameBody.innerHTML = "";
+      const wrapper = document.createElement('div');
+      wrapper.className = 'card';
+      const qb = document.createElement('div');
+      qb.className = 'question-box';
+      qb.innerHTML = `<div class="question-title">${highlightSignals(q.sentence || q.signal || '')}</div>`;
+      wrapper.appendChild(qb);
+
+      // For game we render options similarly but need to attach scoring behaviour
+      function attachGameOptions(opts) {
+        const optionsWrap = document.createElement('div');
+        optionsWrap.className = 'options';
+        opts.forEach((option, index) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'opt-btn';
+          button.textContent = option;
+          button.dataset.index = String(index);
+          button.addEventListener('click', () => {
+            clearInterval(scratch.timerHandle);
+            optionsWrap.querySelectorAll('.opt-btn').forEach((b) => b.disabled = true);
+            const isCorrect = (typeof q.answer === 'number') ? (index === q.answer) : false;
+            const chosenBtn = button;
+            if (typeof q.answer === 'number') {
+              const rightBtn = optionsWrap.querySelector(`[data-index="${q.answer}"]`);
+              if (rightBtn) rightBtn.classList.add('right');
+            }
+            if (!isCorrect) chosenBtn.classList.add('wrong');
+
+            // scoring
+            if (isCorrect) {
+              // bonus if answered quickly
+              const timeLeft = Number(document.getElementById('timer-num').textContent || 0);
+              const base = 10; let bonus = 0;
+              const maxBonusWindow = 6; // seconds
+              if (timeLeft >= (getTimerForType(q.type) - maxBonusWindow)) bonus = 5;
+              team.score += base + bonus;
+              playSfx('correct');
+              toast(`Đúng! +${base + bonus} điểm`);
+            } else {
+              playSfx('wrong');
+              toast('Sai rồi!');
+            }
+            document.getElementById('game-next').classList.remove('hidden');
+            renderScoreBoard(scratch.gameTeams);
+          });
+          optionsWrap.appendChild(button);
+        });
+        qb.appendChild(optionsWrap);
+      }
+
+      if (q.type === 'picture') {
+        const sceneWrap = document.createElement('div');
+        sceneWrap.className = 'scene-box';
+        sceneWrap.innerHTML = q.scene || '';
+        qb.appendChild(sceneWrap);
+        if (q.options && q.options.length) attachGameOptions(q.options);
+      } else if (q.type === 'listen') {
+        const btn = document.createElement('button');
+        btn.className = 'speak-btn'; btn.type = 'button'; btn.textContent = 'Nghe câu';
+        btn.addEventListener('click', () => { playSfx('click'); speak(q.audioText || q.sentence || ''); });
+        qb.appendChild(btn);
+        if (q.options && q.options.length) attachGameOptions(q.options);
+      } else if (q.type === 'arrange') {
+        // simplified: show words and expect teacher to check (or user clicks order)
+        const bank = document.createElement('div'); bank.className = 'word-bank';
+        (q.words || []).forEach((w, i) => {
+          const chip = document.createElement('button'); chip.type = 'button'; chip.className = 'word-chip'; chip.textContent = w;
+          bank.appendChild(chip);
+        });
+        qb.appendChild(bank);
+        // no automatic scoring for arrange in game mode for now
+      } else if (q.options && q.options.length) {
+        attachGameOptions(q.options);
+      }
+
+      gameBody.appendChild(wrapper);
+
+      const duration = getTimerForType(q.type);
+      timerFill.style.width = '100%';
+      timerNum.textContent = String(duration);
+      let remaining = duration;
       clearInterval(scratch.timerHandle);
       scratch.timerHandle = setInterval(() => {
         remaining -= 1;
         timerNum.textContent = String(Math.max(0, remaining));
-        timerFill.style.width = `${(remaining / 15) * 100}%`;
+        timerFill.style.width = `${(remaining / duration) * 100}%`;
         if (remaining <= 0) {
           clearInterval(scratch.timerHandle);
-          toast("Hết giờ! Câu được xem là sai.");
+          toast('Hết giờ! Câu được xem là sai.');
           setTimeout(() => {
             if (scratch.gameQuestions.length > 0) {
               scratch.turnIndex = (scratch.turnIndex + 1) % scratch.gameTeams.length;
@@ -447,25 +628,6 @@
       }, 1000);
 
       renderScoreBoard(scratch.gameTeams);
-      gameBody.querySelectorAll(".opt-btn").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          clearInterval(scratch.timerHandle);
-          const isCorrect = Number(btn.dataset.qindex) === q.answer;
-          gameBody.querySelectorAll(".opt-btn").forEach((b) => {
-            b.disabled = true;
-            if (Number(b.dataset.qindex) === q.answer) b.classList.add("right");
-          });
-          if (isCorrect) {
-            team.score += 10;
-            playSfx("correct");
-            toast("Đúng! +10 điểm");
-          } else {
-            playSfx("wrong");
-            toast("Sai rồi!");
-          }
-          document.getElementById("game-next").classList.remove("hidden");
-        });
-      });
     };
 
     const finishGame = () => {
@@ -475,7 +637,7 @@
       gameEnd.classList.remove("hidden");
       document.getElementById("winner-name").textContent = winner.name;
       const summary = document.getElementById("game-summary");
-      summary.innerHTML = `<thead><tr><th>Đội</th><th>Điểm</th></tr></thead><tbody>${scratch.gameTeams.map((t) => `<tr><td>${t.name}</td><td>${t.score}</td></tr>`).join("")}</tbody>`;
+      summary.innerHTML = `<thead><tr><th>Đội</th><th>Điểm</th></tr></thead><tbody>${scratch.gameTeams.map((t) => `<tr><td>${esc(t.name)}</td><td>${t.score}</td></tr>`).join("")}</tbody>`;
       playSfx("win");
     };
 
@@ -489,6 +651,7 @@
     gameStart.addEventListener("click", startGame);
     gameRandom.addEventListener("click", () => {
       scratch.gameQuestions = shuffle((window.QUESTION_BANK || []).slice());
+      scratch.totalGameQuestions = scratch.gameQuestions.length;
       toast("Đã xáo câu mới");
     });
 
