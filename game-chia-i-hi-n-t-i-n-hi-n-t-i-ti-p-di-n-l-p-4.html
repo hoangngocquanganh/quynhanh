@@ -1,0 +1,1783 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>Game Chia Đội — Hiện Tại Đơn &amp; Hiện Tại Tiếp Diễn — Lớp 4</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+      :root{
+        color-scheme: light;
+        --bg:#e8f5ff;
+        --bg2:#fff3d6;
+        --card:#ffffff;
+        --card2:#f4f9ff;
+        --ink:#1d2a4d;
+        --muted:#5a6b8c;
+        --line:#d7e6f5;
+        --simple:#009e83;
+        --simple-dark:#00755f;
+        --simple-bg:#d7f7ec;
+        --cont:#ef476f;
+        --cont-dark:#c72c54;
+        --cont-bg:#ffe0ea;
+        --sun:#ffb703;
+        --sun-dark:#9a6a00;
+        --blue:#3a86ff;
+        --good:#22b573;
+        --good-bg:#dcf7e8;
+        --bad:#ef476f;
+        --bad-bg:#ffe3ec;
+        --shadow:0 6px 0 rgba(29,42,77,.10), 0 14px 28px rgba(29,42,77,.10);
+        --radius:20px;
+      }
+      @media (prefers-color-scheme: dark){
+        :root{
+          color-scheme: dark;
+          --bg:#121a2e;
+          --bg2:#1b2440;
+          --card:#1e2a47;
+          --card2:#243354;
+          --ink:#f2f6ff;
+          --muted:#a9bbdd;
+          --line:#33477a;
+          --simple:#2fe0b6;
+          --simple-dark:#2fe0b6;
+          --simple-bg:#0f3d33;
+          --cont:#ff7d9c;
+          --cont-dark:#ff7d9c;
+          --cont-bg:#4a1f30;
+          --sun:#ffc93c;
+          --sun-dark:#ffc93c;
+          --good:#3ddc84;
+          --good-bg:#123d28;
+          --bad:#ff7d9c;
+          --bad-bg:#4a1f30;
+          --shadow:0 6px 0 rgba(0,0,0,.25), 0 14px 28px rgba(0,0,0,.35);
+        }
+      }
+      *{box-sizing:border-box}
+      html{scroll-behavior:smooth}
+      body{
+        margin:0;
+        font-family:"Nunito",system-ui,sans-serif;
+        color:var(--ink);
+        background:
+          radial-gradient(900px 420px at 110% -80px, var(--bg2), transparent 60%),
+          var(--bg);
+        min-height:100vh;
+      }
+      h1,h2,h3,.display{font-family:"Baloo 2","Nunito",sans-serif}
+      button{font-family:inherit;cursor:pointer}
+      button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible{
+        outline:3px solid var(--blue); outline-offset:2px;
+      }
+
+      /* ---------- Header & tabs ---------- */
+      header.topbar{
+        position:sticky; top:0; z-index:40;
+        background:var(--card);
+        border-bottom:3px solid var(--line);
+        padding:10px 14px 12px;
+      }
+      .topbar-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap; max-width:1180px; margin:0 auto}
+      .logo-badge{
+        width:46px;height:46px;border-radius:14px;flex:0 0 auto;
+        background:var(--sun); display:grid; place-items:center;
+        box-shadow:0 4px 0 rgba(0,0,0,.12);
+      }
+      .logo-badge svg{width:30px;height:30px}
+      .site-title{font-size:clamp(1.05rem,2.6vw,1.45rem); font-weight:800; line-height:1.15; margin:0}
+      .site-title small{display:block; font-family:"Nunito",sans-serif; font-weight:800; font-size:.78rem; color:var(--muted); letter-spacing:.02em}
+      .topbar-actions{margin-left:auto; display:flex; gap:8px; align-items:center}
+      .icon-btn{
+        border:3px solid var(--line); background:var(--card2); color:var(--ink);
+        border-radius:14px; padding:9px 14px; font-weight:900; font-size:.95rem;
+        display:inline-flex; align-items:center; gap:7px;
+      }
+      .icon-btn svg{width:20px;height:20px}
+      .icon-btn.off{opacity:.55}
+      nav.tabs{max-width:1180px; margin:10px auto 0; display:flex; gap:8px; flex-wrap:wrap}
+      .tab-btn{
+        flex:1 1 150px; border:3px solid var(--line); background:var(--card2); color:var(--ink);
+        border-radius:16px; padding:11px 10px; font-weight:900; font-size:clamp(.95rem,2.2vw,1.1rem);
+        display:flex; align-items:center; justify-content:center; gap:8px;
+      }
+      .tab-btn svg{width:22px;height:22px;flex:0 0 auto}
+      .tab-btn.active{background:var(--blue); border-color:var(--blue); color:#fff; box-shadow:0 5px 0 rgba(0,0,0,.15)}
+      .tab-btn.active.t-simple{background:var(--simple); border-color:var(--simple)}
+      .tab-btn.active.t-game{background:var(--cont); border-color:var(--cont)}
+      .tab-btn.active.t-add{background:var(--sun); border-color:var(--sun); color:#4a3400}
+
+      main{max-width:1180px; margin:0 auto; padding:18px 14px 60px}
+      section.page{display:none}
+      section.page.show{display:block}
+
+      .card{
+        background:var(--card); border:3px solid var(--line); border-radius:var(--radius);
+        box-shadow:var(--shadow); padding:20px; margin-bottom:18px;
+      }
+      .card h2{margin:0 0 6px; font-size:clamp(1.3rem,3.4vw,1.8rem)}
+      .card .sub{color:var(--muted); font-weight:700; margin:0 0 14px; font-size:1rem}
+      .btn{
+        border:none; border-radius:16px; padding:13px 22px; font-weight:900;
+        font-size:1.05rem; color:#fff; background:var(--blue);
+        box-shadow:0 5px 0 rgba(0,0,0,.18); transition:transform .08s ease, filter .15s ease;
+        display:inline-flex; align-items:center; gap:8px; justify-content:center;
+      }
+      .btn:active{transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,.18)}
+      .btn:hover{filter:brightness(1.06)}
+      .btn.big{font-size:1.25rem; padding:16px 30px; border-radius:18px}
+      .btn.green{background:var(--good)} .btn.pink{background:var(--cont)} .btn.teal{background:var(--simple)}
+      .btn.sun{background:var(--sun); color:#4a3400} .btn.ghost{background:var(--card2); color:var(--ink); border:3px solid var(--line); box-shadow:none}
+      .btn:disabled{opacity:.45; cursor:not-allowed; transform:none}
+      .btn svg{width:22px;height:22px}
+
+      /* ---------- So sánh 2 thì ---------- */
+      .vs-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+      @media (max-width:720px){ .vs-grid{grid-template-columns:1fr} }
+      .tense-card{border-radius:18px; padding:18px; border:3px solid}
+      .tense-card.simple{background:var(--simple-bg); border-color:var(--simple)}
+      .tense-card.cont{background:var(--cont-bg); border-color:var(--cont)}
+      .tense-card h3{margin:0 0 2px; font-size:1.35rem; display:flex; align-items:center; gap:9px}
+      .tense-card h3 svg{width:30px;height:30px}
+      .tense-card .en-name{font-weight:900; color:var(--muted); font-size:.85rem; text-transform:uppercase; letter-spacing:.05em}
+      .formula{
+        font-family:"Baloo 2",sans-serif; font-weight:800; font-size:clamp(1.15rem,3vw,1.5rem);
+        background:var(--card); border-radius:14px; padding:10px 14px; margin:12px 0;
+        border:3px dashed; text-align:center;
+      }
+      .tense-card.simple .formula{border-color:var(--simple); color:var(--simple-dark)}
+      .tense-card.cont .formula{border-color:var(--cont); color:var(--cont-dark)}
+      .tense-card ul{margin:8px 0 0; padding-left:20px; font-weight:700; font-size:1.02rem; line-height:1.55}
+      .ex-line{
+        background:var(--card); border-radius:12px; padding:9px 12px; margin-top:9px; font-weight:800;
+        display:flex; align-items:center; gap:10px; font-size:1.05rem; flex-wrap:wrap;
+      }
+      .week{display:flex; gap:5px; margin-top:12px}
+      .week span{flex:1; text-align:center; background:var(--card); border:2px solid var(--simple); color:var(--simple-dark);
+        border-radius:9px; font-weight:900; font-size:.8rem; padding:5px 0}
+      .week span.on{background:var(--simple); color:#fff}
+      .now-clock{display:flex; align-items:center; gap:12px; margin-top:12px; background:var(--card); border-radius:12px; padding:9px 12px}
+      .now-clock .now-tag{font-family:"Baloo 2",sans-serif; font-weight:800; font-size:1.5rem; color:var(--cont-dark); letter-spacing:.06em}
+      .now-clock p{margin:0; font-weight:700}
+
+      /* ---------- Dấu hiệu ---------- */
+      .sig{
+        font-weight:900; padding:1px 9px; border-radius:999px; white-space:nowrap; display:inline-block; margin:0 1px;
+      }
+      .sig.s{background:var(--simple); color:#fff}
+      .sig.c{background:var(--cont); color:#fff}
+      .sig-chips{display:flex; flex-wrap:wrap; gap:9px}
+      .sig-chip{
+        border:3px solid; border-radius:999px; padding:9px 16px; font-weight:900; font-size:1.05rem; background:var(--card);
+      }
+      .sig-chip.s{border-color:var(--simple); color:var(--simple-dark)}
+      .sig-chip.c{border-color:var(--cont); color:var(--cont-dark)}
+      .sig-chip.picked.s{background:var(--simple); color:#fff}
+      .sig-chip.picked.c{background:var(--cont); color:#fff}
+      .sig-demo{
+        margin-top:14px; border-radius:14px; background:var(--card2); border:3px dashed var(--line);
+        padding:14px 16px; font-size:1.15rem; font-weight:800; display:none; align-items:center; gap:12px; flex-wrap:wrap;
+      }
+      .sig-demo.show{display:flex}
+
+      /* ---------- Flashcard ---------- */
+      .flash-wrap{display:flex; flex-direction:column; align-items:center; gap:14px}
+      .flash{
+        display:block; width:min(560px,100%); margin:0 auto; height:250px; perspective:1100px; background:none; border:none; padding:0;
+      }
+      .flash-inner{display:block; position:relative; width:100%; height:100%; transition:transform .55s; transform-style:preserve-3d}
+      .flash.flipped .flash-inner{transform:rotateY(180deg)}
+      .flash-face{
+        position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden;
+        border-radius:20px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+        gap:10px; padding:20px; text-align:center; border:3px solid var(--line);
+      }
+      .flash-front{background:var(--card); box-shadow:var(--shadow)}
+      .flash-back{background:var(--card2); transform:rotateY(180deg); box-shadow:var(--shadow)}
+      .flash-face .sentence{font-family:"Baloo 2",sans-serif; font-size:clamp(1.35rem,4vw,1.9rem); font-weight:800; line-height:1.3}
+      .flash-face .hintline{color:var(--muted); font-weight:800; font-size:.95rem}
+      .flash-back .tense-tag{font-family:"Baloo 2",sans-serif; font-weight:800; font-size:1.4rem; padding:6px 18px; border-radius:999px; color:#fff}
+      .flash-back .tense-tag.s{background:var(--simple)} .flash-back .tense-tag.c{background:var(--cont)}
+      .flash-back .struct{font-weight:900; font-size:1.1rem}
+      .flash-nav{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:center}
+      .flash-count{font-weight:900; color:var(--muted)}
+
+      /* ---------- Câu hỏi chung ---------- */
+      .q-badge{
+        display:inline-flex; align-items:center; gap:8px; font-weight:900; font-size:.95rem;
+        background:var(--sun); color:#4a3400; border-radius:999px; padding:6px 14px;
+      }
+      .q-badge svg{width:19px;height:19px}
+      .q-sentence{
+        font-family:"Baloo 2",sans-serif; font-weight:800; line-height:1.35;
+        font-size:clamp(1.5rem,4.6vw,2.3rem); margin:14px 0 6px; text-align:center;
+      }
+      .q-sentence .blank{color:var(--cont-dark); border-bottom:5px dotted var(--cont); padding:0 10px}
+      .q-sentence .verb-hint{color:var(--blue); font-size:.72em; background:var(--card2); border:2px solid var(--line); border-radius:10px; padding:0 10px}
+      .q-sub{text-align:center; color:var(--muted); font-weight:800; margin:0 0 8px}
+      .opts{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px}
+      @media (max-width:640px){ .opts{grid-template-columns:1fr} }
+      .opt-btn{
+        border:3px solid var(--line); background:var(--card2); color:var(--ink); border-radius:16px;
+        padding:16px 14px; font-family:"Baloo 2",sans-serif; font-weight:700;
+        font-size:clamp(1.1rem,3vw,1.4rem); text-align:center; box-shadow:0 4px 0 rgba(0,0,0,.08);
+        transition:transform .08s ease, background .15s ease, border-color .15s ease;
+      }
+      .opt-btn:hover:not(:disabled){border-color:var(--blue); transform:translateY(-2px)}
+      .opt-btn:disabled{cursor:default; opacity:.85}
+      .opt-btn.right{background:var(--good-bg); border-color:var(--good); color:var(--ink); opacity:1}
+      .opt-btn.wrong{background:var(--bad-bg); border-color:var(--bad); opacity:1}
+      .opt-btn.big-two{font-size:clamp(1.2rem,3.4vw,1.6rem); padding:22px 14px}
+      .feedback{
+        display:none; margin-top:16px; border-radius:16px; padding:16px 18px; font-weight:800; font-size:1.08rem; line-height:1.5;
+      }
+      .feedback.show{display:block}
+      .feedback.ok{background:var(--good-bg); border:3px solid var(--good)}
+      .feedback.no{background:var(--bad-bg); border:3px solid var(--bad)}
+      .feedback .fb-title{font-family:"Baloo 2",sans-serif; font-size:1.3rem; display:block; margin-bottom:4px}
+      .feedback .formula-line{
+        display:inline-block; margin-top:8px; background:var(--card); border:2px dashed var(--muted);
+        border-radius:10px; padding:4px 12px; font-family:"Baloo 2",sans-serif;
+      }
+      .speak-btn{
+        border:3px solid var(--line); background:var(--card); color:var(--ink); border-radius:999px;
+        padding:8px 16px; font-weight:900; display:inline-flex; gap:7px; align-items:center; font-size:.98rem;
+      }
+      .speak-btn svg{width:20px;height:20px}
+      .speak-btn:hover{border-color:var(--blue)}
+
+      /* ---------- Sắp xếp từ ---------- */
+      .answer-line{
+        min-height:64px; border:3px dashed var(--blue); border-radius:16px; background:var(--card2);
+        display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:10px 12px; margin:14px 0;
+      }
+      .answer-line .placeholder{color:var(--muted); font-weight:800}
+      .word-bank{display:flex; flex-wrap:wrap; gap:9px; justify-content:center; margin:10px 0 16px}
+      .word-chip{
+        border:3px solid var(--ink); background:var(--card); color:var(--ink); border-radius:13px;
+        font-family:"Baloo 2",sans-serif; font-weight:700; font-size:clamp(1.05rem,2.8vw,1.3rem); padding:9px 16px;
+        box-shadow:0 4px 0 rgba(0,0,0,.15);
+      }
+      .word-chip.used{visibility:hidden}
+      .word-chip.in-answer{background:var(--blue); color:#fff; border-color:var(--blue)}
+
+      /* ---------- Tranh minh họa ---------- */
+      .scene-box{display:flex; justify-content:center; margin:8px 0 4px}
+      .scene-box svg{width:min(300px,80vw); height:auto; border-radius:18px; border:3px solid var(--line); background:#eaf7ff}
+      .hint-chips{display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:10px}
+      .hint-chips span{background:var(--card2); border:2px solid var(--line); border-radius:999px; padding:5px 14px; font-weight:900}
+
+      /* ---------- Đồng hồ ---------- */
+      .timer-row{display:flex; align-items:center; gap:12px; margin-top:6px}
+      .timer-track{flex:1; height:18px; border-radius:999px; background:var(--card2); border:2px solid var(--line); overflow:hidden}
+      .timer-fill{height:100%; width:100%; background:var(--good); border-radius:999px; transition:width 1s linear, background .3s}
+      .timer-fill.mid{background:var(--sun)} .timer-fill.low{background:var(--bad)}
+      .timer-num{font-family:"Baloo 2",sans-serif; font-weight:800; font-size:1.5rem; min-width:74px; text-align:center}
+      .timer-num.low{color:var(--bad)}
+
+      /* ---------- Luyện tập ---------- */
+      .progress-dots{display:flex; gap:6px; flex-wrap:wrap; margin:10px 0 4px}
+      .progress-dots span{width:17px; height:17px; border-radius:50%; background:var(--card2); border:2px solid var(--line)}
+      .progress-dots span.done{background:var(--blue); border-color:var(--blue)}
+      .progress-dots span.ok{background:var(--good); border-color:var(--good)}
+      .progress-dots span.no{background:var(--bad); border-color:var(--bad)}
+      .review-item{border:3px solid var(--bad); background:var(--bad-bg); border-radius:14px; padding:13px 16px; margin-bottom:10px; font-weight:700}
+      .review-item.ok{border-color:var(--good); background:var(--good-bg)}
+      .review-item .rq{font-family:"Baloo 2",sans-serif; font-size:1.12rem}
+      .score-big{font-family:"Baloo 2",sans-serif; font-size:clamp(2rem,7vw,3.2rem); font-weight:800; text-align:center; margin:6px 0}
+
+      /* ---------- Game: cài đặt đội ---------- */
+      .team-count-row{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px}
+      .count-btn{
+        flex:1 1 90px; border:3px solid var(--line); background:var(--card2); color:var(--ink);
+        border-radius:16px; padding:14px; font-family:"Baloo 2",sans-serif; font-weight:800; font-size:1.3rem;
+      }
+      .count-btn.active{background:var(--blue); color:#fff; border-color:var(--blue)}
+      .team-edit{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px}
+      .team-edit-card{border:3px solid var(--line); border-radius:16px; padding:14px; background:var(--card2)}
+      .team-edit-card .t-head{display:flex; align-items:center; gap:10px; margin-bottom:10px}
+      .team-edit-card .t-head svg{width:52px; height:52px}
+      .team-edit-card input[type="text"]{
+        flex:1; min-width:0; font-family:"Baloo 2",sans-serif; font-weight:700; font-size:1.15rem;
+        border:3px solid var(--line); border-radius:12px; padding:9px 12px; background:var(--card); color:var(--ink);
+      }
+      .pick-row{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px}
+      .pick-label{font-weight:900; font-size:.85rem; color:var(--muted); width:100%}
+      .color-dot{width:34px; height:34px; border-radius:50%; border:3px solid transparent; padding:0}
+      .color-dot.active{border-color:var(--ink); transform:scale(1.12)}
+      .animal-pick{width:44px; height:44px; border-radius:12px; border:3px solid var(--line); background:var(--card); padding:3px}
+      .animal-pick svg{width:100%; height:100%}
+      .animal-pick.active{border-color:var(--ink); background:var(--sun)}
+
+      /* ---------- Game: bảng điểm ---------- */
+      .scoreboard{display:grid; gap:12px; margin-bottom:16px}
+      .score-card{
+        border-radius:18px; padding:12px 16px; border:3px solid var(--line); background:var(--card);
+        display:flex; align-items:center; gap:12px; box-shadow:var(--shadow); position:relative; overflow:hidden;
+      }
+      .score-card::before{content:""; position:absolute; left:0; top:0; bottom:0; width:10px; background:var(--tc,#ccc)}
+      .score-card.turn{border-color:var(--tc); outline:3px solid var(--tc); outline-offset:1px}
+      .score-card svg.mascot{width:54px; height:54px; flex:0 0 auto}
+      .score-card .t-name{font-family:"Baloo 2",sans-serif; font-weight:800; font-size:clamp(1.05rem,2.6vw,1.35rem); line-height:1.1}
+      .score-card .t-stats{font-weight:800; color:var(--muted); font-size:.9rem}
+      .score-card .t-score{margin-left:auto; font-family:"Baloo 2",sans-serif; font-weight:800; font-size:clamp(1.7rem,4.5vw,2.4rem)}
+      .score-card .pm{display:flex; flex-direction:column; gap:5px}
+      .score-card .pm button{
+        width:36px; height:30px; border-radius:9px; border:2px solid var(--line); background:var(--card2);
+        font-weight:900; font-size:1rem; color:var(--ink); line-height:1;
+      }
+      .turn-banner{
+        text-align:center; font-family:"Baloo 2",sans-serif; font-weight:800;
+        font-size:clamp(1.25rem,3.6vw,1.8rem); margin:2px 0 14px;
+      }
+      .turn-banner .team-pill{color:#fff; border-radius:999px; padding:3px 18px; display:inline-block}
+      .steal-box{
+        display:none; margin-top:14px; border:3px dashed var(--sun); background:var(--bg2);
+        border-radius:16px; padding:14px 16px;
+      }
+      @media (prefers-color-scheme: dark){ .steal-box{background:var(--card2)} }
+      .steal-box.show{display:block}
+      .steal-box h3{margin:0 0 10px; font-size:1.2rem}
+      .steal-teams{display:flex; gap:9px; flex-wrap:wrap}
+      .steal-btn{
+        border:3px solid var(--ink); color:#fff; border-radius:13px; padding:10px 18px;
+        font-family:"Baloo 2",sans-serif; font-weight:800; font-size:1.1rem;
+      }
+      .teacher-bar{display:flex; gap:9px; flex-wrap:wrap; margin-top:16px}
+      .teacher-bar .btn{flex:1 1 140px; font-size:.98rem; padding:11px 10px}
+      .q-progress{font-weight:900; color:var(--muted); text-align:center; margin-bottom:4px}
+
+      /* ---------- Kết thúc game ---------- */
+      .trophy-wrap{display:flex; justify-content:center; margin:6px 0}
+      .trophy-wrap svg{width:130px; height:130px}
+      .winner-name{font-family:"Baloo 2",sans-serif; font-weight:800; font-size:clamp(1.8rem,6vw,2.8rem); text-align:center; margin:4px 0}
+      table.summary{width:100%; border-collapse:collapse; font-weight:800; margin-top:12px}
+      table.summary th, table.summary td{padding:10px 8px; border-bottom:2px solid var(--line); text-align:left}
+      table.summary td.num, table.summary th.num{text-align:center}
+      .rank-badge{display:inline-grid; place-items:center; width:32px; height:32px; border-radius:50%; background:var(--card2); border:2px solid var(--line); font-family:"Baloo 2",sans-serif}
+      .rank-badge.first{background:var(--sun); border-color:var(--sun-dark)}
+
+      /* ---------- Form thêm câu ---------- */
+      .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+      @media (max-width:700px){ .form-grid{grid-template-columns:1fr} }
+      .field label{display:block; font-weight:900; margin-bottom:6px}
+      .field input[type="text"], .field select, .field textarea{
+        width:100%; border:3px solid var(--line); border-radius:12px; padding:11px 13px;
+        font-family:inherit; font-weight:700; font-size:1.02rem; background:var(--card); color:var(--ink);
+      }
+      .field .note{font-size:.88rem; color:var(--muted); font-weight:700; margin-top:5px}
+      .custom-list{margin-top:14px}
+      .custom-item{display:flex; gap:10px; align-items:flex-start; border:2px solid var(--line); border-radius:12px; padding:10px 13px; margin-bottom:8px; font-weight:700; background:var(--card2)}
+      .custom-item button{margin-left:auto; flex:0 0 auto}
+
+      /* ---------- Hướng dẫn ---------- */
+      .guide-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:14px}
+      .guide-box{border:3px solid var(--line); border-radius:16px; padding:16px; background:var(--card2)}
+      .guide-box h3{margin:0 0 8px; font-size:1.15rem; display:flex; gap:8px; align-items:center}
+      .guide-box h3 svg{width:24px;height:24px}
+      .guide-box ul{margin:0; padding-left:19px; font-weight:700; line-height:1.6}
+      .hidden{display:none !important}
+      #confetti-canvas{position:fixed; inset:0; pointer-events:none; z-index:99}
+      .toast{
+        position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(90px);
+        visibility:hidden; opacity:0;
+        background:var(--ink); color:var(--card); font-weight:900; padding:13px 22px; border-radius:999px;
+        z-index:100; transition:transform .3s ease, opacity .3s ease, visibility .3s; max-width:92vw; text-align:center; font-size:1rem;
+      }
+      .toast.show{transform:translateX(-50%) translateY(0); visibility:visible; opacity:1}
+      @media (prefers-reduced-motion: reduce){
+        .flash-inner{transition:none}
+        html{scroll-behavior:auto}
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="confetti-canvas" class="hidden"></canvas>
+    <div class="toast" id="toast" role="status"></div>
+
+    <header class="topbar">
+      <div class="topbar-row">
+        <div class="logo-badge" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none"><circle cx="17" cy="24" r="11" fill="#009e83"/><circle cx="31" cy="24" r="11" fill="#ef476f" fill-opacity="0.9"/><path d="M17 17v7l5 3" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M38 12l1.5 3.5L43 17l-3.5 1.5L38 22l-1.5-3.5L33 17l3.5-1.5L38 12z" fill="#1d2a4d"/></svg>
+        </div>
+        <h1 class="site-title">Thám tử hai thì: Đơn &amp; Tiếp diễn
+          <small>TIẾNG ANH LỚP 4 · NHẬN BIẾT QUA DẤU HIỆU + CẤU TRÚC CÂU ĐƠN</small>
+        </h1>
+        <div class="topbar-actions">
+          <button class="icon-btn" id="sound-toggle" type="button" aria-pressed="true"></button>
+        </div>
+      </div>
+      <nav class="tabs" aria-label="Chọn phần">
+        <button class="tab-btn active" data-tab="learn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>
+          1 · Học nhanh
+        </button>
+        <button class="tab-btn t-simple" data-tab="practice" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg>
+          2 · Luyện tập
+        </button>
+        <button class="tab-btn t-game" data-tab="game" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v6a5 5 0 0 1-10 0V4z"/><path d="M7 6H4a2 2 0 0 0 0 4h3M17 6h3a2 2 0 0 1 0 4h-3"/></svg>
+          3 · Game chia đội
+        </button>
+        <button class="tab-btn t-add" data-tab="add" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          Thêm câu hỏi
+        </button>
+        <button class="tab-btn" data-tab="guide" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3A2.6 2.6 0 1 1 12 12.2V13"/><circle cx="12" cy="17" r="0.6" fill="currentColor"/></svg>
+          Hướng dẫn
+        </button>
+      </nav>
+    </header>
+
+    <main>
+      <!-- ================= PHẦN 1: HỌC NHANH ================= -->
+      <section class="page show" id="page-learn">
+        <div class="card">
+          <h2>Hai thì — hai thế giới</h2>
+          <p class="sub">Nhìn vào <strong>dấu hiệu</strong> trong câu là biết ngay dùng thì nào. Dấu hiệu của Hiện tại đơn tô <span class="sig s">màu xanh</span>, của Hiện tại tiếp diễn tô <span class="sig c">màu hồng</span>.</p>
+          <div class="vs-grid">
+            <div class="tense-card simple">
+              <h3>
+                <svg viewBox="0 0 24 24" fill="none" stroke="#009e83" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M7 15h3M13 15h3"/></svg>
+                Hiện tại đơn
+              </h3>
+              <div class="en-name">Present Simple · Thói quen, việc lặp lại</div>
+              <div class="formula">S + V / V-s / V-es</div>
+              <ul>
+                <li><strong>I / You / We / They</strong> + động từ nguyên thể: <em>They play football.</em></li>
+                <li><strong>He / She / It</strong> + động từ thêm <strong>s / es</strong>: <em>She plays football.</em></li>
+              </ul>
+              <div class="week" aria-hidden="true"><span>T2</span><span class="on">T3</span><span>T4</span><span class="on">T5</span><span>T6</span><span class="on">T7</span><span>CN</span></div>
+              <div class="ex-line"><span>She reads books <span class="sig s">every day</span>.</span>
+                <button class="speak-btn" type="button" data-speak="She reads books every day."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.4 5.6a9 9 0 0 1 0 12.8"/></svg>Nghe</button>
+              </div>
+              <div class="ex-line"><span>He goes to school <span class="sig s">on Mondays</span>.</span>
+                <button class="speak-btn" type="button" data-speak="He goes to school on Mondays."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.4 5.6a9 9 0 0 1 0 12.8"/></svg>Nghe</button>
+              </div>
+            </div>
+            <div class="tense-card cont">
+              <h3>
+                <svg viewBox="0 0 24 24" fill="none" stroke="#ef476f" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+                Hiện tại tiếp diễn
+              </h3>
+              <div class="en-name">Present Continuous · Đang diễn ra ngay lúc nói</div>
+              <div class="formula">S + am / is / are + V-ing</div>
+              <ul>
+                <li><strong>I am</strong> · <strong>He / She / It is</strong> · <strong>You / We / They are</strong></li>
+                <li>Động từ luôn thêm đuôi <strong>-ing</strong>: <em>She is playing football.</em></li>
+              </ul>
+              <div class="now-clock">
+                <span class="now-tag">NOW!</span>
+                <p>Việc đang xảy ra <strong>ngay bây giờ</strong>, tại thời điểm nói.</p>
+              </div>
+              <div class="ex-line"><span>She is reading a book <span class="sig c">now</span>.</span>
+                <button class="speak-btn" type="button" data-speak="She is reading a book now."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.4 5.6a9 9 0 0 1 0 12.8"/></svg>Nghe</button>
+              </div>
+              <div class="ex-line"><span><span class="sig c">Look!</span> They are playing football.</span>
+                <button class="speak-btn" type="button" data-speak="Look! They are playing football."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.4 5.6a9 9 0 0 1 0 12.8"/></svg>Nghe</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Mật mã dấu hiệu</h2>
+          <p class="sub">Bấm vào từng dấu hiệu để xem câu ví dụ — đây chính là "chìa khóa" để thắng game chia đội.</p>
+          <div class="vs-grid">
+            <div>
+              <h3 style="color:var(--simple-dark); margin:0 0 10px">Thói quen → Hiện tại đơn</h3>
+              <div class="sig-chips" id="chips-simple"></div>
+            </div>
+            <div>
+              <h3 style="color:var(--cont-dark); margin:0 0 10px">Đang diễn ra → Hiện tại tiếp diễn</h3>
+              <div class="sig-chips" id="chips-cont"></div>
+            </div>
+          </div>
+          <div class="sig-demo" id="sig-demo"></div>
+        </div>
+
+        <div class="card">
+          <h2>Thẻ lật flashcard</h2>
+          <p class="sub">Đọc câu ở mặt trước, đoán thì — rồi bấm vào thẻ để lật xem đáp án và lý do.</p>
+          <div class="flash-wrap">
+            <button class="flash" id="flash" type="button" aria-label="Thẻ lật flashcard, bấm để lật thẻ">
+              <span class="flash-inner">
+                <span class="flash-face flash-front">
+                  <span class="sentence" id="flash-front-text"></span>
+                  <span class="hintline">Câu này là thì gì? Bấm để lật thẻ</span>
+                </span>
+                <span class="flash-face flash-back" id="flash-back-face"></span>
+              </span>
+            </button>
+            <div class="flash-nav">
+              <button class="btn ghost" id="flash-prev" type="button">← Thẻ trước</button>
+              <span class="flash-count" id="flash-count"></span>
+              <button class="speak-btn" id="flash-speak" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.4 5.6a9 9 0 0 1 0 12.8"/></svg>Nghe &amp; đọc theo</button>
+              <button class="btn ghost" id="flash-next" type="button">Thẻ sau →</button>
+            </div>
+            <button class="btn teal big" type="button" data-goto="practice">Đã nhớ mật mã? Luyện tập ngay →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PHẦN 2: LUYỆN TẬP ================= -->
+      <section class="page" id="page-practice">
+        <div class="card" id="practice-start">
+          <h2>Luyện tập cá nhân — 10 câu</h2>
+          <p class="sub">Tự kiểm tra một mình trước khi thi đấu. Mỗi câu trả lời xong sẽ hiện ngay giải thích: dấu hiệu nào, cấu trúc nào. Làm sai không sao — xem giải thích rồi nhớ cho lần sau.</p>
+          <button class="btn teal big" id="practice-begin" type="button">Bắt đầu luyện tập</button>
+          <button class="btn ghost" id="practice-shuffle" type="button">Đổi bộ câu khác</button>
+        </div>
+        <div class="card hidden" id="practice-play">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px">
+            <span class="q-badge" id="practice-badge"></span>
+            <span class="flash-count" id="practice-count"></span>
+          </div>
+          <div class="progress-dots" id="practice-dots"></div>
+          <div id="practice-body"></div>
+          <div style="display:flex; justify-content:center; margin-top:16px">
+            <button class="btn teal hidden" id="practice-next" type="button">Câu tiếp theo →</button>
+          </div>
+        </div>
+        <div class="card hidden" id="practice-result">
+          <h2 style="text-align:center">Kết quả luyện tập</h2>
+          <div class="score-big" id="practice-score"></div>
+          <p class="sub" style="text-align:center" id="practice-verdict"></p>
+          <div id="practice-review"></div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:14px">
+            <button class="btn teal" id="practice-again" type="button">Luyện lại 10 câu mới</button>
+            <button class="btn pink" type="button" data-goto="game">Vào game chia đội →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PHẦN 3: GAME CHIA ĐỘI ================= -->
+      <section class="page" id="page-game">
+        <div class="card" id="game-setup">
+          <h2>Cài đặt đội</h2>
+          <p class="sub">Chọn số đội, đặt tên, chọn màu và linh vật. Mỗi đội sẽ trả lời lần lượt — đội khác được <strong>cướp điểm (+5)</strong> nếu đội chính trả lời sai.</p>
+          <h3 style="margin:0 0 8px">Số đội</h3>
+          <div class="team-count-row" id="team-count-row">
+            <button class="count-btn" data-count="2" type="button">2 đội</button>
+            <button class="count-btn active" data-count="3" type="button">3 đội</button>
+            <button class="count-btn" data-count="4" type="button">4 đội</button>
+          </div>
+          <div class="team-edit" id="team-edit"></div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:18px">
+            <button class="btn pink big" id="game-start" type="button">Bắt đầu chơi — 24 câu</button>
+            <button class="btn ghost" id="game-random-note" type="button">Câu hỏi được xáo ngẫu nhiên mỗi ván</button>
+          </div>
+        </div>
+
+        <div id="game-play" class="hidden">
+          <div class="scoreboard" id="scoreboard"></div>
+          <div class="card">
+            <div class="q-progress" id="game-progress"></div>
+            <div class="turn-banner" id="turn-banner"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px">
+              <span class="q-badge" id="game-badge"></span>
+              <button class="speak-btn hidden" id="game-speak-q" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.4 5.6a9 9 0 0 1 0 12.8"/></svg>Nghe câu hỏi</button>
+            </div>
+            <div class="timer-row">
+              <div class="timer-track"><div class="timer-fill" id="timer-fill"></div></div>
+              <div class="timer-num" id="timer-num"></div>
+            </div>
+            <div id="game-body"></div>
+            <div class="steal-box" id="steal-box">
+              <h3 id="steal-title">Cơ hội CƯỚP ĐIỂM! Đội nào xung phong trả lời? Đúng được +5 điểm.</h3>
+              <div class="steal-teams" id="steal-teams"></div>
+            </div>
+            <div style="display:flex; justify-content:center; margin-top:16px">
+              <button class="btn pink hidden" id="game-next" type="button">Câu tiếp theo →</button>
+            </div>
+            <div class="teacher-bar" aria-label="Bảng điều khiển giáo viên">
+              <button class="btn ghost" id="tc-show-answer" type="button">Hiện đáp án</button>
+              <button class="btn ghost" id="tc-skip" type="button">Qua câu</button>
+              <button class="btn ghost" id="tc-new-deck" type="button">Đổi bộ câu mới</button>
+              <button class="btn ghost" id="tc-reset" type="button">Đặt lại ván</button>
+              <button class="btn ghost" id="tc-setup" type="button">Về cài đặt đội</button>
+            </div>
+            <p class="sub" style="margin:12px 0 0">Bảng điều khiển giáo viên: bấm + / − ngay trên thẻ điểm của từng đội để cộng / trừ điểm thủ công.</p>
+          </div>
+        </div>
+
+        <div class="card hidden" id="game-end">
+          <div class="trophy-wrap" aria-hidden="true">
+            <svg viewBox="0 0 120 120"><path d="M35 15h50v38a25 25 0 0 1-50 0V15z" fill="#ffb703"/><path d="M35 25H18a17 17 0 0 0 18 17M85 25h17a17 17 0 0 1-18 17" fill="none" stroke="#ffb703" stroke-width="8"/><rect x="54" y="74" width="12" height="14" fill="#e08e00"/><path d="M38 104h44l-5-16H43l-5 16z" fill="#e08e00"/><path d="M60 28l3.7 8.6L73 37.5l-6.6 6 2 9.2L60 47.8l-8.4 4.9 2-9.2-6.6-6 9.3-.9L60 28z" fill="#fff3d6"/></svg>
+          </div>
+          <p class="sub" style="text-align:center; margin:0">Đội chiến thắng là</p>
+          <div class="winner-name" id="winner-name"></div>
+          <table class="summary" id="game-summary"></table>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:18px">
+            <button class="btn pink big" id="game-replay" type="button">Chơi lại</button>
+            <button class="btn ghost" id="game-review-btn" type="button">Xem lại câu sai</button>
+            <button class="btn ghost" id="game-back-setup" type="button">Đổi đội</button>
+          </div>
+          <div id="game-review" class="hidden" style="margin-top:16px"></div>
+        </div>
+      </section>
+
+      <!-- ================= THÊM CÂU HỎI ================= -->
+      <section class="page" id="page-add">
+        <div class="card">
+          <h2>Giáo viên thêm câu hỏi mới</h2>
+          <p class="sub">Câu hỏi thêm vào sẽ xuất hiện ngay trong phần Luyện tập và Game chia đội của buổi học này. Hãy ghi dấu hiệu nhận biết thật rõ để học sinh luyện "mật mã".</p>
+          <form id="add-form">
+            <div class="form-grid">
+              <div class="field">
+                <label for="f-type">Dạng câu hỏi</label>
+                <select id="f-type">
+                  <option value="choose">Chọn thì đúng (điền vào chỗ trống)</option>
+                  <option value="conjugate">Chia động từ</option>
+                  <option value="classify">Phân loại câu</option>
+                  <option value="hunt">Săn dấu hiệu</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="f-signal">Dấu hiệu nhận biết (gõ đúng như trong câu)</label>
+                <input type="text" id="f-signal" placeholder="VD: every day / now / Look!" required />
+              </div>
+              <div class="field" style="grid-column:1/-1">
+                <label for="f-sentence" id="f-sentence-label">Câu hỏi (dùng ___ cho chỗ trống nếu là dạng điền)</label>
+                <input type="text" id="f-sentence" placeholder="VD: She ___ football every Sunday." required />
+              </div>
+              <div class="field">
+                <label for="f-opt0">Đáp án 1</label>
+                <input type="text" id="f-opt0" required />
+              </div>
+              <div class="field">
+                <label for="f-opt1">Đáp án 2</label>
+                <input type="text" id="f-opt1" required />
+              </div>
+              <div class="field">
+                <label for="f-opt2">Đáp án 3 (có thể để trống)</label>
+                <input type="text" id="f-opt2" />
+              </div>
+              <div class="field">
+                <label for="f-opt3">Đáp án 4 (có thể để trống)</label>
+                <input type="text" id="f-opt3" />
+              </div>
+              <div class="field">
+                <label for="f-correct">Đáp án đúng là đáp án số</label>
+                <select id="f-correct">
+                  <option value="0">Đáp án 1</option>
+                  <option value="1">Đáp án 2</option>
+                  <option value="2">Đáp án 3</option>
+                  <option value="3">Đáp án 4</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="f-tense">Câu này thuộc thì</label>
+                <select id="f-tense">
+                  <option value="simple">Hiện tại đơn (thói quen)</option>
+                  <option value="cont">Hiện tại tiếp diễn (đang diễn ra)</option>
+                </select>
+              </div>
+            </div>
+            <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap">
+              <button class="btn sun" type="submit">Lưu câu hỏi</button>
+              <button class="btn ghost" type="button" id="add-demo">Điền thử một câu mẫu</button>
+            </div>
+          </form>
+          <div class="custom-list" id="custom-list"></div>
+        </div>
+      </section>
+
+      <!-- ================= HƯỚNG DẪN ================= -->
+      <section class="page" id="page-guide">
+        <div class="card">
+          <h2>Hướng dẫn cho giáo viên</h2>
+          <p class="sub">Một tiết học gợi ý: 5 phút Học nhanh → 5 phút Luyện tập → 20 phút Game chia đội.</p>
+          <div class="guide-grid">
+            <div class="guide-box">
+              <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7.5" r="3.5"/><path d="M22 21v-2a4 4 0 0 0-3-3.85M15.5 4.15a3.5 3.5 0 0 1 0 6.7"/></svg>Cách chia đội</h3>
+              <ul>
+                <li>Vào mục <strong>3 · Game chia đội</strong>, chọn 2, 3 hoặc 4 đội.</li>
+                <li>Cho mỗi đội tự đặt tên, chọn màu và linh vật con vật.</li>
+                <li>Bấm <strong>Bắt đầu chơi</strong>: 24 câu, các đội trả lời lần lượt theo vòng tròn, hiện rõ "Lượt của đội nào".</li>
+                <li>Chiếu màn hình lên bảng, cho cả lớp cùng đọc câu và gợi ý cho đội mình.</li>
+              </ul>
+            </div>
+            <div class="guide-box">
+              <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v6a5 5 0 0 1-10 0V4z"/><path d="M7 6H4a2 2 0 0 0 0 4h3M17 6h3a2 2 0 0 1 0 4h-3"/></svg>Cách tính điểm</h3>
+              <ul>
+                <li>Trả lời đúng: <strong>+10 điểm</strong>. Đúng nhanh trong 5 giây đầu: <strong>+5 điểm thưởng</strong>.</li>
+                <li>Trả lời sai: <strong>không trừ điểm</strong> — nhưng đội khác được <strong>cướp điểm</strong>: bấm tên đội xung phong, trả lời đúng được <strong>+5</strong>.</li>
+                <li>Mỗi câu có đồng hồ đếm ngược 15–20 giây (riêng dạng sắp xếp từ: 30 giây). Hết giờ tính như trả lời sai.</li>
+                <li>Giáo viên là trọng tài: cộng / trừ điểm thủ công bằng nút + / − trên thẻ điểm, hoặc Qua câu, Hiện đáp án, Đặt lại ván.</li>
+              </ul>
+            </div>
+            <div class="guide-box">
+              <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>8 dạng bài trong game</h3>
+              <ul>
+                <li><strong>Săn dấu hiệu</strong> — tìm "mật mã" trong câu.</li>
+                <li><strong>Phân loại câu</strong> — Thói quen hay Đang diễn ra?</li>
+                <li><strong>Chọn thì đúng</strong> và <strong>Chia động từ</strong> — luyện cấu trúc câu đơn.</li>
+                <li><strong>Sắp xếp từ</strong> — ghép thành câu đúng thứ tự.</li>
+                <li><strong>Thám tử sửa lỗi</strong> — tìm câu sai s/es, am/is/are, V-ing.</li>
+                <li><strong>Nhìn tranh đặt câu</strong> và <strong>Nghe và chọn</strong> — nghe máy đọc rồi chọn thì.</li>
+              </ul>
+            </div>
+            <div class="guide-box">
+              <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Cách thêm câu hỏi</h3>
+              <ul>
+                <li>Vào mục <strong>Thêm câu hỏi</strong>, chọn dạng bài, gõ câu và các đáp án.</li>
+                <li>Gõ <strong>dấu hiệu</strong> đúng y như trong câu (VD: <em>every day</em>) để web tự tô màu và sinh giải thích.</li>
+                <li>Dạng điền chỗ trống: gõ <strong>___</strong> ở vị trí cần điền.</li>
+                <li>Câu đã thêm dùng được ngay trong buổi học; ngân hàng có sẵn 64 câu, mỗi ván chơi rút ngẫu nhiên nên chơi lại không trùng.</li>
+              </ul>
+            </div>
+            <div class="guide-box">
+              <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>Mẹo dùng trên lớp</h3>
+              <ul>
+                <li>Bắt đầu bằng mục <strong>Học nhanh</strong>: bấm từng dấu hiệu trong "Mật mã dấu hiệu" cho cả lớp đọc to ví dụ theo.</li>
+                <li>Dùng nút <strong>Nghe</strong> để máy đọc mẫu — học sinh đọc theo 1 lần trước khi chơi.</li>
+                <li>Sau mỗi câu sai, đọc to phần giải thích "Sai ở đâu?" để cả lớp cùng rút kinh nghiệm.</li>
+                <li>Cuối ván bấm <strong>Xem lại câu sai</strong> để ôn nhanh những câu cả lớp hay nhầm.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+    "use strict";
+    /* =============== Tiện ích =============== */
+    const $ = (s, r) => (r || document).querySelector(s);
+    const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+    function shuffle(arr){
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+    function esc(s){
+      return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    }
+    let toastTimer = null;
+    function toast(msg){
+      const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
+    }
+
+    /* =============== Âm thanh (Web Audio) =============== */
+    let audioCtx = null, soundOn = true;
+    function ac(){
+      if (!audioCtx){
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (AC) audioCtx = new AC();
+      }
+      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+      return audioCtx;
+    }
+    function tone(freq, start, dur, type, vol){
+      if (!soundOn) return;
+      const ctx = ac(); if (!ctx) return;
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = type || "sine"; o.frequency.value = freq;
+      const t0 = ctx.currentTime + start;
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(vol || 0.16, t0 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(t0); o.stop(t0 + dur + 0.05);
+    }
+    const sfx = {
+      click(){ tone(620, 0, 0.08, "triangle", 0.08); },
+      correct(){ [523,659,784].forEach((f,i)=>tone(f, i*0.09, 0.22, "triangle", 0.18)); },
+      wrong(){ tone(220, 0, 0.2, "sine", 0.12); tone(185, 0.14, 0.28, "sine", 0.12); },
+      tick(){ tone(880, 0, 0.05, "square", 0.05); },
+      timeout(){ [440,370,311].forEach((f,i)=>tone(f, i*0.13, 0.2, "triangle", 0.14)); },
+      win(){ [523,659,784,1047,784,1047,1319].forEach((f,i)=>tone(f, i*0.13, 0.3, "triangle", 0.18)); },
+      steal(){ tone(988, 0, 0.1, "square", 0.1); tone(1319, 0.09, 0.16, "square", 0.1); }
+    };
+    const ICON_SOUND_ON  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.4 5.6a9 9 0 0 1 0 12.8"/></svg><span>Âm thanh: Bật</span>';
+    const ICON_SOUND_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M22 9l-6 6M16 9l6 6"/></svg><span>Âm thanh: Tắt</span>';
+    const soundBtn = $("#sound-toggle");
+    function renderSoundBtn(){ soundBtn.innerHTML = soundOn ? ICON_SOUND_ON : ICON_SOUND_OFF; soundBtn.classList.toggle("off", !soundOn); soundBtn.setAttribute("aria-pressed", String(soundOn)); }
+    soundBtn.addEventListener("click", () => { soundOn = !soundOn; renderSoundBtn(); if (soundOn) sfx.click(); });
+    renderSoundBtn();
+
+    /* =============== Đọc tiếng Anh (Web Speech API) =============== */
+    function speak(text){
+      if (!("speechSynthesis" in window)) { toast("Trình duyệt này không hỗ trợ đọc tiếng Anh."); return; }
+      try {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = "en-US"; u.rate = 0.88; u.pitch = 1.05;
+        const voices = window.speechSynthesis.getVoices();
+        const en = voices.find(v => /^en[-_]/i.test(v.lang) && /female|zira|samantha|google us/i.test(v.name)) || voices.find(v => /^en[-_]/i.test(v.lang));
+        if (en) u.voice = en;
+        window.speechSynthesis.speak(u);
+      } catch(e){ /* bỏ qua nếu TTS lỗi */ }
+    }
+    if ("speechSynthesis" in window) window.speechSynthesis.getVoices();
+    document.addEventListener("click", e => {
+      const b = e.target.closest("[data-speak]");
+      if (b) { sfx.click(); speak(b.getAttribute("data-speak")); }
+    });
+
+    /* =============== Tô màu dấu hiệu =============== */
+    const SIMPLE_SIGNALS = ["every morning","every afternoon","every evening","every day","every week","every year","every Sunday","on Sundays","on Mondays","on Fridays","always","usually","often","sometimes","never"];
+    const CONT_SIGNALS = ["at the moment","right now","Look!","Listen!","now","today"];
+    function highlightSignals(sentence){
+      let out = esc(sentence);
+      const all = CONT_SIGNALS.map(s => [s, "c"]).concat(SIMPLE_SIGNALS.map(s => [s, "s"]))
+        .sort((a, b) => b[0].length - a[0].length);
+      for (const [sig, cls] of all){
+        const re = new RegExp(sig.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi");
+        out = out.replace(re, m => '<span class="sig ' + cls + '">' + m + "</span>");
+      }
+      return out;
+    }
+    function explainText(q){
+      const cls = q.tense === "simple" ? "thói quen, lặp lại" : "đang diễn ra ngay lúc nói";
+      const tenseName = q.tense === "simple" ? "Hiện tại đơn" : "Hiện tại tiếp diễn";
+      const formula = q.tense === "simple" ? "S + V / V-s / V-es" : "S + am / is / are + V-ing";
+      const sigPart = q.signal ? ('Có dấu hiệu <strong>"' + esc(q.signal) + '"</strong> → ' + cls + ' → dùng <strong>' + tenseName + '</strong>.') : ('Câu này nói về ' + cls + ' → dùng <strong>' + tenseName + '</strong>.');
+      return sigPart + ' <span class="formula-line">Công thức: ' + formula + "</span>" + (q.note ? " " + q.note : "");
+    }
+
+    /* =============== Dữ liệu: Mật mã dấu hiệu =============== */
+    const SIGNAL_DEMO = {
+      simple: [
+        ["always", "She always smiles at her teacher."],
+        ["usually", "He usually walks to school."],
+        ["often", "We often play football in the park."],
+        ["sometimes", "Sometimes I read comics in bed."],
+        ["never", "The cat never sleeps at night."],
+        ["every day", "I brush my teeth every day."],
+        ["every morning", "Dad reads the news every morning."],
+        ["on Sundays", "We visit Grandma on Sundays."]
+      ],
+      cont: [
+        ["now", "She is doing her homework now."],
+        ["right now", "They are playing chess right now."],
+        ["at the moment", "Mum is cooking at the moment."],
+        ["Look!", "Look! The baby is walking."],
+        ["Listen!", "Listen! Someone is singing."],
+        ["today", "He is wearing a red cap today."]
+      ]
+    };
+    function buildSignalChips(){
+      const mk = (list, cls, box) => {
+        list.forEach(([sig, ex]) => {
+          const b = document.createElement("button");
+          b.type = "button"; b.className = "sig-chip " + cls; b.textContent = sig;
+          b.addEventListener("click", () => {
+            sfx.click();
+            $$(".sig-chip").forEach(c => c.classList.remove("picked"));
+            b.classList.add("picked");
+            const demo = $("#sig-demo");
+            demo.innerHTML = '<span>' + highlightSignals(ex) + '</span>' +
+              '<button class="speak-btn" type="button" data-speak="' + esc(ex) + '">Nghe câu</button>' +
+              '<span style="font-weight:800;color:var(--muted)">Dấu hiệu "' + esc(sig) + '" → ' + (cls === "s" ? "thói quen → Hiện tại đơn" : "đang diễn ra → Hiện tại tiếp diễn") + "</span>";
+            demo.classList.add("show");
+          });
+          $(box).appendChild(b);
+        });
+      };
+      mk(SIGNAL_DEMO.simple, "s", "#chips-simple");
+      mk(SIGNAL_DEMO.cont, "c", "#chips-cont");
+    }
+
+    /* =============== Dữ liệu: Flashcard =============== */
+    const FLASHCARDS = [
+      { s: "She plays the piano every day.", tense: "simple", signal: "every day", struct: "She + plays (V-s)" },
+      { s: "Look! The dog is running fast.", tense: "cont", signal: "Look!", struct: "The dog + is + running" },
+      { s: "They go to school by bus every morning.", tense: "simple", signal: "every morning", struct: "They + go (V nguyên thể)" },
+      { s: "I am reading a funny story now.", tense: "cont", signal: "now", struct: "I + am + reading" },
+      { s: "He never eats vegetables.", tense: "simple", signal: "never", struct: "He + eats (V-s)" },
+      { s: "Listen! The birds are singing.", tense: "cont", signal: "Listen!", struct: "The birds + are + singing" },
+      { s: "We watch TV on Sundays.", tense: "simple", signal: "on Sundays", struct: "We + watch (V nguyên thể)" },
+      { s: "Mum is cooking dinner at the moment.", tense: "cont", signal: "at the moment", struct: "Mum + is + cooking" }
+    ];
+    let flashIdx = 0;
+    function renderFlash(){
+      const c = FLASHCARDS[flashIdx];
+      $("#flash").classList.remove("flipped");
+      $("#flash-front-text").innerHTML = highlightSignals(c.s);
+      $("#flash-count").textContent = "Thẻ " + (flashIdx + 1) + " / " + FLASHCARDS.length;
+      const back = $("#flash-back-face");
+      back.innerHTML =
+        '<span class="tense-tag ' + (c.tense === "simple" ? "s" : "c") + '">' + (c.tense === "simple" ? "Hiện tại đơn" : "Hiện tại tiếp diễn") + "</span>" +
+        '<span class="struct">Dấu hiệu: "' + esc(c.signal) + '"</span>' +
+        '<span class="struct">Cấu trúc: ' + esc(c.struct) + "</span>" +
+        '<span class="hintline">' + (c.tense === "simple" ? "Thói quen / lặp lại → S + V / V-s / V-es" : "Đang diễn ra → S + am / is / are + V-ing") + "</span>";
+    }
+    $("#flash").addEventListener("click", () => { sfx.click(); $("#flash").classList.toggle("flipped"); });
+    $("#flash-prev").addEventListener("click", () => { flashIdx = (flashIdx + FLASHCARDS.length - 1) % FLASHCARDS.length; renderFlash(); });
+    $("#flash-next").addEventListener("click", () => { flashIdx = (flashIdx + 1) % FLASHCARDS.length; renderFlash(); });
+    $("#flash-speak").addEventListener("click", () => speak(FLASHCARDS[flashIdx].s));
+
+    /* =============== Linh vật SVG =============== */
+    const ANIMALS = {
+      tiger: { name: "Hổ", svg: '<circle cx="18" cy="14" r="8" fill="#f59e0b"/><circle cx="82" cy="14" r="8" fill="#f59e0b"/><circle cx="18" cy="14" r="4" fill="#fde68a"/><circle cx="82" cy="14" r="4" fill="#fde68a"/><circle cx="50" cy="54" r="38" fill="#fbbf24"/><path d="M50 16v10M30 22l6 8M70 22l-6 8" stroke="#92400e" stroke-width="5" stroke-linecap="round"/><circle cx="36" cy="50" r="5" fill="#1d2a4d"/><circle cx="64" cy="50" r="5" fill="#1d2a4d"/><ellipse cx="50" cy="66" rx="13" ry="10" fill="#fff7ed"/><path d="M46 63h8l-4 5z" fill="#92400e"/><path d="M50 68v4M42 76c3 3 13 3 16 0" stroke="#92400e" stroke-width="3" fill="none" stroke-linecap="round"/>' },
+      panda: { name: "Gấu trúc", svg: '<circle cx="18" cy="14" r="9" fill="#1d2a4d"/><circle cx="82" cy="14" r="9" fill="#1d2a4d"/><circle cx="50" cy="54" r="38" fill="#ffffff"/><ellipse cx="35" cy="48" rx="8" ry="10" fill="#1d2a4d" transform="rotate(-18 35 48)"/><ellipse cx="65" cy="48" rx="8" ry="10" fill="#1d2a4d" transform="rotate(18 65 48)"/><circle cx="36" cy="47" r="3" fill="#fff"/><circle cx="64" cy="47" r="3" fill="#fff"/><ellipse cx="50" cy="64" rx="6" ry="4.5" fill="#1d2a4d"/><path d="M50 68v3M43 75c2.5 2.5 11.5 2.5 14 0" stroke="#1d2a4d" stroke-width="3" fill="none" stroke-linecap="round"/>' },
+      frog: { name: "Ếch", svg: '<circle cx="26" cy="18" r="11" fill="#22c55e"/><circle cx="74" cy="18" r="11" fill="#22c55e"/><circle cx="26" cy="18" r="6" fill="#fff"/><circle cx="74" cy="18" r="6" fill="#fff"/><circle cx="26" cy="19" r="3" fill="#1d2a4d"/><circle cx="74" cy="19" r="3" fill="#1d2a4d"/><ellipse cx="50" cy="58" rx="38" ry="34" fill="#4ade80"/><ellipse cx="50" cy="70" rx="20" ry="14" fill="#dcfce7"/><circle cx="50" cy="60" r="3.5" fill="#16a34a"/><path d="M36 72c4 6 24 6 28 0" stroke="#16a34a" stroke-width="3.5" fill="none" stroke-linecap="round"/><circle cx="28" cy="64" r="4.5" fill="#fda4af"/><circle cx="72" cy="64" r="4.5" fill="#fda4af"/>' },
+      owl: { name: "Cú mèo", svg: '<path d="M22 22l10 8M78 22l-10 8" stroke="#7c3aed" stroke-width="7" stroke-linecap="round"/><ellipse cx="50" cy="56" rx="36" ry="38" fill="#8b5cf6"/><ellipse cx="50" cy="68" rx="20" ry="20" fill="#ede9fe"/><circle cx="36" cy="48" r="11" fill="#fff"/><circle cx="64" cy="48" r="11" fill="#fff"/><circle cx="36" cy="48" r="5.5" fill="#1d2a4d"/><circle cx="64" cy="48" r="5.5" fill="#1d2a4d"/><path d="M45 58h10l-5 7z" fill="#f59e0b"/><path d="M40 80h4M48 82h4M56 80h4" stroke="#7c3aed" stroke-width="3" stroke-linecap="round"/>' },
+      fox: { name: "Cáo", svg: '<path d="M16 8l22 14-16 8z" fill="#ea580c"/><path d="M84 8L62 22l16 8z" fill="#ea580c"/><path d="M21 15l12 8-9 4z" fill="#fed7aa"/><path d="M79 15l-12 8 9 4z" fill="#fed7aa"/><circle cx="50" cy="56" r="36" fill="#f97316"/><path d="M22 62c8 16 18 24 28 24s20-8 28-24c-8-4-16-6-28-6s-20 2-28 6z" fill="#fff7ed"/><circle cx="35" cy="50" r="4.5" fill="#1d2a4d"/><circle cx="65" cy="50" r="4.5" fill="#1d2a4d"/><ellipse cx="50" cy="66" rx="6" ry="4.5" fill="#1d2a4d"/><path d="M50 70v3M44 76c2.5 2.5 9.5 2.5 12 0" stroke="#1d2a4d" stroke-width="3" fill="none" stroke-linecap="round"/>' },
+      cat: { name: "Mèo", svg: '<path d="M20 34L16 10l20 10z" fill="#64748b"/><path d="M80 34l4-24-20 10z" fill="#64748b"/><path d="M21 26l-1.5-9 9 4.5zM79 26l1.5-9-9 4.5z" fill="#fda4af"/><circle cx="50" cy="56" r="36" fill="#94a3b8"/><circle cx="35" cy="52" r="4.5" fill="#1d2a4d"/><circle cx="65" cy="52" r="4.5" fill="#1d2a4d"/><path d="M46 64h8l-4 4.5z" fill="#e11d63"/><path d="M50 68v3M43 75c2.5 2 11.5 2 14 0" stroke="#1d2a4d" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M8 58l14 2M10 68l13-1M92 58l-14 2M90 68l-13-1" stroke="#475569" stroke-width="2.5" stroke-linecap="round"/>' },
+      bunny: { name: "Thỏ", svg: '<ellipse cx="32" cy="20" rx="9" ry="19" fill="#f9a8d4"/><ellipse cx="68" cy="20" rx="9" ry="19" fill="#f9a8d4"/><ellipse cx="32" cy="22" rx="4.5" ry="12" fill="#fbcfe8"/><ellipse cx="68" cy="22" rx="4.5" ry="12" fill="#fbcfe8"/><circle cx="50" cy="62" r="32" fill="#fdf2f8"/><circle cx="38" cy="58" r="4.5" fill="#1d2a4d"/><circle cx="62" cy="58" r="4.5" fill="#1d2a4d"/><ellipse cx="50" cy="68" rx="5" ry="3.8" fill="#ec4899"/><path d="M50 72v3" stroke="#1d2a4d" stroke-width="2.5"/><rect x="45" y="75" width="10" height="8" rx="2" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/><circle cx="28" cy="70" r="4.5" fill="#fda4af"/><circle cx="72" cy="70" r="4.5" fill="#fda4af"/>' },
+      lion: { name: "Sư tử", svg: '<circle cx="50" cy="52" r="44" fill="#b45309"/><circle cx="50" cy="52" r="44" fill="none" stroke="#92400e" stroke-width="4" stroke-dasharray="7 6"/><circle cx="50" cy="54" r="31" fill="#fbbf24"/><circle cx="39" cy="50" r="4.5" fill="#1d2a4d"/><circle cx="61" cy="50" r="4.5" fill="#1d2a4d"/><ellipse cx="50" cy="64" rx="11" ry="8.5" fill="#fff7ed"/><path d="M45.5 61h9l-4.5 4.5z" fill="#92400e"/><path d="M50 66v3M43 73c2.5 2.6 11.5 2.6 14 0" stroke="#92400e" stroke-width="3" fill="none" stroke-linecap="round"/>' }
+    };
+    const ANIMAL_KEYS = Object.keys(ANIMALS);
+    function animalSVG(key, size){
+      return '<svg viewBox="0 0 100 100" width="' + (size || 60) + '" height="' + (size || 60) + '" aria-hidden="true">' + ANIMALS[key].svg + "</svg>";
+    }
+
+    /* =============== Tranh minh họa SVG cho dạng "Nhìn tranh" =============== */
+    const SCENES = {
+      swim: '<rect width="300" height="200" fill="#bae6fd"/><circle cx="262" cy="30" r="17" fill="#fde047"/><path d="M0 118q25-14 50 0t50 0 50 0 50 0 50 0 50 0v82H0z" fill="#38bdf8"/><path d="M0 146q25-14 50 0t50 0 50 0 50 0 50 0 50 0v54H0z" fill="#0284c7" opacity=".55"/><circle cx="140" cy="102" r="21" fill="#fcd7b0"/><path d="M124 92a21 21 0 0 1 32 0l-5-12h-22z" fill="#7c2d12"/><path d="M112 128q28 12 62 2" stroke="#fcd7b0" stroke-width="13" fill="none" stroke-linecap="round"/><path d="M196 96q16-12 30-4M206 116q14 2 22 12" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".8"/>',
+      dance: '<rect width="300" height="200" fill="#fbcfe8"/><rect y="160" width="300" height="40" fill="#f472b6"/><circle cx="150" cy="66" r="20" fill="#8d5524"/><path d="M132 54a20 20 0 0 1 36 0l-4-14h-28z" fill="#111827"/><path d="M150 86v44M150 100l-34-16M150 100l34-20M150 130l-22 30M150 130l24 28" stroke="#db2777" stroke-width="11" fill="none" stroke-linecap="round"/><path d="M62 44a10 10 0 1 1-4 8V28l20-4v22" fill="none" stroke="#7c3aed" stroke-width="5" stroke-linecap="round"/><path d="M238 60a10 10 0 1 1-4 8V44l20-4v22" fill="none" stroke="#7c3aed" stroke-width="5" stroke-linecap="round"/>',
+      read: '<rect width="300" height="200" fill="#fef3c7"/><rect y="150" width="300" height="50" fill="#d97706"/><circle cx="150" cy="62" r="21" fill="#fcd7b0"/><path d="M128 54a22 22 0 0 1 44 0l-3-15h-38z" fill="#374151"/><path d="M96 108q54-20 108 0v52q-54-20-108 0z" fill="#3b82f6"/><path d="M150 92v66" stroke="#1d4ed8" stroke-width="5"/><path d="M108 112q18-6 32 0M108 130q18-6 32 0M160 112q18-6 32 0M160 130q18-6 32 0" stroke="#dbeafe" stroke-width="5" stroke-linecap="round"/>',
+      sing: '<rect width="300" height="200" fill="#ddd6fe"/><circle cx="150" cy="64" r="21" fill="#fcd7b0"/><path d="M126 58a24 24 0 0 1 48 0l-2-20q-22-12-44 2z" fill="#b45309"/><rect x="182" y="86" width="13" height="42" rx="6" transform="rotate(24 188 107)" fill="#374151"/><circle cx="176" cy="80" r="13" fill="#6b7280"/><path d="M66 52a10 10 0 1 1-4 8V36l20-4v22" fill="none" stroke="#db2777" stroke-width="5" stroke-linecap="round"/><path d="M238 92a10 10 0 1 1-4 8V76l20-4v22" fill="none" stroke="#db2777" stroke-width="5" stroke-linecap="round"/><path d="M150 88v40M118 108h64" stroke="#7c3aed" stroke-width="11" stroke-linecap="round"/>',
+      football: '<rect width="300" height="200" fill="#bbf7d0"/><rect y="140" width="300" height="60" fill="#22c55e"/><path d="M150 140v60M20 170h260" stroke="#fff" stroke-width="4" opacity=".7"/><circle cx="118" cy="58" r="19" fill="#fcd7b0"/><path d="M100 48a19 19 0 0 1 36 0l-3-13h-30z" fill="#111827"/><path d="M118 78v38M118 92l-28-12M118 92l26-14M118 116l-18 30M118 116l26 26" stroke="#2563eb" stroke-width="10" fill="none" stroke-linecap="round"/><circle cx="196" cy="150" r="17" fill="#fff" stroke="#111827" stroke-width="3"/><path d="M196 138l6 8h-12zM184 152l9-2M208 152l-9-2" fill="#111827"/>',
+      draw: '<rect width="300" height="200" fill="#e0f2fe"/><rect x="78" y="42" width="144" height="118" rx="8" fill="#fff" stroke="#94a3b8" stroke-width="5"/><path d="M104 128l26-34 20 24 14-16 30 32z" fill="#86efac"/><circle cx="188" cy="66" r="11" fill="#fde047"/><path d="M196 138l44-44 12 12-44 44-16 4z" fill="#f59e0b"/><path d="M196 138l16 16M240 94l12 12" stroke="#b45309" stroke-width="4"/>',
+      eat: '<rect width="300" height="200" fill="#ffedd5"/><rect y="140" width="300" height="60" fill="#b45309"/><circle cx="150" cy="58" r="20" fill="#fcd7b0"/><path d="M129 50a21 21 0 0 1 42 0l-3-14h-36z" fill="#7c2d12"/><ellipse cx="150" cy="138" rx="52" ry="15" fill="#fff" stroke="#cbd5e1" stroke-width="3"/><path d="M112 132q38-18 76 0" fill="#f97316"/><path d="M104 108q-8 16 4 26M196 108q8 16-4 26" stroke="#fcd7b0" stroke-width="11" fill="none" stroke-linecap="round"/><path d="M92 96q4 8 0 14M208 96q-4 8 0 14" stroke="#9ca3af" stroke-width="4" fill="none"/>',
+      sleep: '<rect width="300" height="200" fill="#1e3a8a"/><path d="M248 26a22 22 0 1 0 14 36 26 26 0 0 1-14-36z" fill="#fde68a"/><circle cx="52" cy="36" r="2.6" fill="#fff"/><circle cx="96" cy="58" r="2.2" fill="#fff"/><circle cx="200" cy="70" r="2.4" fill="#fff"/><rect x="30" y="140" width="240" height="26" rx="10" fill="#7c3aed"/><ellipse cx="118" cy="136" rx="52" ry="24" fill="#f59e0b"/><circle cx="160" cy="124" r="19" fill="#fbbf24"/><path d="M148 112l5 7M168 110l4 8" stroke="#92400e" stroke-width="4" stroke-linecap="round"/><circle cx="154" cy="124" r="2.6" fill="#1d2a4d"/><path d="M146 132q6 3 12 0" stroke="#92400e" stroke-width="3" fill="none" stroke-linecap="round"/><text x="196" y="104" font-family="Baloo 2, sans-serif" font-weight="800" font-size="26" fill="#bfdbfe">Z z z</text>'
+    };
+
+    /* =============== NGÂN HÀNG CÂU HỎI (64 câu) ===============
+       type: hunt | classify | choose | conjugate | arrange | fix | picture | listen
+       tense: simple | cont  ·  signal: dấu hiệu nhận biết trong câu          */
+    const BANK = [
+      /* ---- 1. SĂN DẤU HIỆU ---- */
+      { type:"hunt", tense:"simple", signal:"every day", sentence:"She reads books every day.", options:["every day","reads","books","She"], answer:0 },
+      { type:"hunt", tense:"cont", signal:"now", sentence:"They are playing football now.", options:["playing","football","now","They"], answer:2 },
+      { type:"hunt", tense:"simple", signal:"always", sentence:"He always gets up early.", options:["gets up","He","early","always"], answer:3 },
+      { type:"hunt", tense:"cont", signal:"Look!", sentence:"Look! The baby is crying.", options:["Look!","baby","crying","The"], answer:0 },
+      { type:"hunt", tense:"simple", signal:"on Sundays", sentence:"We visit Grandma on Sundays.", options:["visit","on Sundays","Grandma","We"], answer:1 },
+      { type:"hunt", tense:"cont", signal:"at the moment", sentence:"I am doing my homework at the moment.", options:["homework","doing","I","at the moment"], answer:3 },
+      { type:"hunt", tense:"simple", signal:"usually", sentence:"She usually walks to school.", options:["walks","usually","school","She"], answer:1 },
+      { type:"hunt", tense:"cont", signal:"Listen!", sentence:"Listen! The birds are singing.", options:["birds","singing","Listen!","The"], answer:2 },
+
+      /* ---- 2. PHÂN LOẠI CÂU ---- */
+      { type:"classify", tense:"simple", signal:"every morning", sentence:"He brushes his teeth every morning.", options:["Thói quen (Hiện tại đơn)","Đang diễn ra (Hiện tại tiếp diễn)"], answer:0 },
+      { type:"classify", tense:"cont", signal:"now", sentence:"She is drawing a cat now.", options:["Thói quen (Hiện tại đơn)","Đang diễn ra (Hiện tại tiếp diễn)"], answer:1 },
+      { type:"classify", tense:"simple", signal:"often", sentence:"They often play badminton after school.", options:["Thói quen (Hiện tại đơn)","Đang diễn ra (Hiện tại tiếp diễn)"], answer:0 },
+      { type:"classify", tense:"cont", signal:"right now", sentence:"Look at Tom! He is riding his bike right now.", options:["Thói quen (Hiện tại đơn)","Đang diễn ra (Hiện tại tiếp diễn)"], answer:1 },
+      { type:"classify", tense:"simple", signal:"never", sentence:"My dad never drinks coffee.", options:["Thói quen (Hiện tại đơn)","Đang diễn ra (Hiện tại tiếp diễn)"], answer:0 },
+      { type:"classify", tense:"cont", signal:"at the moment", sentence:"We are watching a film at the moment.", options:["Thói quen (Hiện tại đơn)","Đang diễn ra (Hiện tại tiếp diễn)"], answer:1 },
+      { type:"classify", tense:"simple", signal:"every day", sentence:"The dog runs in the garden every day.", options:["Thói quen (Hiện tại đơn)","Đang diễn ra (Hiện tại tiếp diễn)"], answer:0 },
+      { type:"classify", tense:"cont", signal:"today", sentence:"It is raining today.", options:["Thói quen (Hiện tại đơn)","Đang diễn ra (Hiện tại tiếp diễn)"], answer:1 },
+
+      /* ---- 3. CHỌN THÌ ĐÚNG ---- */
+      { type:"choose", tense:"cont", signal:"now", sentence:"She ___ a book now.", options:["is reading","reads","read","reading"], answer:0 },
+      { type:"choose", tense:"simple", signal:"every Sunday", sentence:"He ___ football every Sunday.", options:["is playing","plays","play","playing"], answer:1 },
+      { type:"choose", tense:"cont", signal:"right now", sentence:"They ___ in the pool right now.", options:["swim","swims","are swimming","swimming"], answer:2 },
+      { type:"choose", tense:"simple", signal:"usually", sentence:"I ___ to school by bike usually.", options:["am going","goes","going","go"], answer:3 },
+      { type:"choose", tense:"cont", signal:"Listen!", sentence:"Listen! Someone ___ at the door.", options:["knocks","is knocking","knock","knocking"], answer:1 },
+      { type:"choose", tense:"simple", signal:"always", sentence:"She always ___ her teeth before bed.", options:["is brushing","brush","brushes","brushing"], answer:2 },
+      { type:"choose", tense:"cont", signal:"at the moment", sentence:"We ___ English at the moment.", options:["are learning","learns","learn","learning"], answer:0 },
+      { type:"choose", tense:"simple", signal:"often", sentence:"He often ___ TV in the evening.", options:["is watching","watch","watching","watches"], answer:3 },
+
+      /* ---- 4. CHIA ĐỘNG TỪ ---- */
+      { type:"conjugate", tense:"simple", signal:"every day", sentence:"She (read) ___ books every day.", verb:"read", options:["read","reads","is reading","reading"], answer:1 },
+      { type:"conjugate", tense:"cont", signal:"now", sentence:"He (play) ___ football now.", verb:"play", options:["plays","play","is playing","playing"], answer:2 },
+      { type:"conjugate", tense:"simple", signal:"on Mondays", sentence:"They (have) ___ music on Mondays.", verb:"have", options:["has","are having","having","have"], answer:3 },
+      { type:"conjugate", tense:"cont", signal:"at the moment", sentence:"I (write) ___ a letter at the moment.", verb:"write", options:["am writing","writes","write","writing"], answer:0 },
+      { type:"conjugate", tense:"simple", signal:"every year", sentence:"It (fly) ___ to the south every year.", verb:"fly", options:["is flying","flies","fly","flying"], answer:1 },
+      { type:"conjugate", tense:"cont", signal:"Look!", sentence:"Look! The cat (chase) ___ a mouse.", verb:"chase", options:["chases","chase","is chasing","chasing"], answer:2 },
+      { type:"conjugate", tense:"simple", signal:"every morning", sentence:"He (go) ___ to school every morning.", verb:"go", options:["go","is going","going","goes"], answer:3 },
+      { type:"conjugate", tense:"cont", signal:"right now", sentence:"We (dance) ___ in the classroom right now.", verb:"dance", options:["are dancing","dances","dance","dancing"], answer:0 },
+
+      /* ---- 5. SẮP XẾP TỪ THÀNH CÂU ---- */
+      { type:"arrange", tense:"cont", signal:"now", words:["She","is","dancing","now."], sentence:"She is dancing now." },
+      { type:"arrange", tense:"simple", signal:"every Sunday", words:["He","plays","football","every Sunday."], sentence:"He plays football every Sunday." },
+      { type:"arrange", tense:"cont", signal:"right now", words:["They","are","swimming","right now."], sentence:"They are swimming right now." },
+      { type:"arrange", tense:"simple", signal:"always", words:["I","always","drink","milk."], sentence:"I always drink milk." },
+      { type:"arrange", tense:"cont", signal:"at the moment", words:["We","are","reading","at the moment."], sentence:"We are reading at the moment." },
+      { type:"arrange", tense:"simple", signal:"on Fridays", words:["She","has","English","on Fridays."], sentence:"She has English on Fridays." },
+      { type:"arrange", tense:"cont", signal:"Look!", words:["Look!","He","is","running."], sentence:"Look! He is running." },
+      { type:"arrange", tense:"simple", signal:"every day", words:["The cat","sleeps","in the garden","every day."], sentence:"The cat sleeps in the garden every day." },
+
+      /* ---- 6. THÁM TỬ SỬA LỖI ---- */
+      { type:"fix", tense:"simple", signal:"every day", badSentence:"He is go to school every day.", sentence:"He goes to school every day.", options:["He goes to school every day.","He is goes to school every day.","He going to school every day.","He go to school every day."], answer:0, note:'Sai ở đâu? — Sai CẤU TRÚC: "is go" không tồn tại. Có "every day" là thói quen nên bỏ "is", dùng "goes" (He + V-es).' },
+      { type:"fix", tense:"cont", signal:"now", badSentence:"She reading a book now.", sentence:"She is reading a book now.", options:["She reads a book now.","She is reading a book now.","She reading is a book now.","She read a book now."], answer:1, note:'Sai ở đâu? — Sai CẤU TRÚC: thiếu "is". Có "now" thì phải đủ bộ: is + V-ing.' },
+      { type:"fix", tense:"simple", signal:"every morning", badSentence:"They gets up at six every morning.", sentence:"They get up at six every morning.", options:["They is get up at six every morning.","They getting up at six every morning.","They get up at six every morning.","They gets up at six every morning."], answer:2, note:'Sai ở đâu? — Sai CẤU TRÚC: "They" dùng động từ nguyên thể "get", không thêm "s". Chỉ He/She/It mới thêm s/es.' },
+      { type:"fix", tense:"cont", signal:"at the moment", badSentence:"We is playing games at the moment.", sentence:"We are playing games at the moment.", options:["We playing games at the moment.","We plays games at the moment.","We is playing games at the moment.","We are playing games at the moment."], answer:3, note:'Sai ở đâu? — Sai CẤU TRÚC: "We" đi với "are", không đi với "is". I–am, He/She/It–is, We/You/They–are.' },
+      { type:"fix", tense:"simple", signal:"on Sundays", badSentence:"She play the piano on Sundays.", sentence:"She plays the piano on Sundays.", options:["She plays the piano on Sundays.","She is play the piano on Sundays.","She playing the piano on Sundays.","She playes the piano on Sundays."], answer:0, note:'Sai ở đâu? — Sai CẤU TRÚC: "She" phải dùng "plays" (thêm s). "playes" là sai chính tả.' },
+      { type:"fix", tense:"cont", signal:"Listen!", badSentence:"Listen! He is sing a song.", sentence:"Listen! He is singing a song.", options:["Listen! He sings a song.","Listen! He is singing a song.","Listen! He is sings a song.","Listen! He sing a song."], answer:1, note:'Sai ở đâu? — Sai CẤU TRÚC: sau "is" động từ phải thêm -ing: "singing", không để nguyên "sing".' },
+      { type:"fix", tense:"simple", signal:"always", badSentence:"He always is happy at school.", sentence:"He is always happy at school.", options:["He always happy is at school.","He is happy always at school.","He is always happy at school.","He always is happy at school."], answer:2, note:'Sai ở đâu? — Sai VỊ TRÍ DẤU HIỆU: "always" đứng sau "is" → "He is always happy". Đây là câu có động từ "be" nên không chia thì như động từ thường.' },
+      { type:"fix", tense:"cont", signal:"right now", badSentence:"I is doing my homework right now.", sentence:"I am doing my homework right now.", options:["I doing my homework right now.","I does my homework right now.","I is doing my homework right now.","I am doing my homework right now."], answer:3, note:'Sai ở đâu? — Sai CẤU TRÚC: "I" đi với "am", không đi với "is". I–am, He/She/It–is, We/You/They–are.' },
+
+      /* ---- 7. NHÌN TRANH ĐẶT CÂU ---- */
+      { type:"picture", tense:"cont", signal:"now", scene:"swim", hint:"he · swim", sentence:"He is swimming now.", options:["He swims now.","He is swimming now.","He swim every day.","He are swimming now."], answer:1 },
+      { type:"picture", tense:"simple", signal:"every Sunday", scene:"football", hint:"they · play football", sentence:"They play football every Sunday.", options:["They are playing football every Sunday.","They plays football every Sunday.","They play football every Sunday.","They playing football now."], answer:2 },
+      { type:"picture", tense:"cont", signal:"at the moment", scene:"read", hint:"she · read a book", sentence:"She is reading a book at the moment.", options:["She is reading a book at the moment.","She reads a book at the moment.","She read a book every day.","She are reading a book now."], answer:0 },
+      { type:"picture", tense:"cont", signal:"Listen!", scene:"sing", hint:"she · sing", sentence:"Listen! She is singing.", options:["Listen! She sings.","Listen! She sing.","Listen! She is sing.","Listen! She is singing."], answer:3 },
+      { type:"picture", tense:"simple", signal:"every morning", scene:"eat", hint:"he · eat breakfast", sentence:"He eats breakfast every morning.", options:["He is eating breakfast every morning.","He eats breakfast every morning.","He eat breakfast every morning.","He eating breakfast now."], answer:1 },
+      { type:"picture", tense:"cont", signal:"right now", scene:"dance", hint:"they · dance", sentence:"They are dancing right now.", options:["They dances right now.","They dance every day.","They are dancing right now.","They is dancing right now."], answer:2 },
+      { type:"picture", tense:"cont", signal:"now", scene:"draw", hint:"I · draw a picture", sentence:"I am drawing a picture now.", options:["I am drawing a picture now.","I draws a picture now.","I drawing a picture now.","I draw a picture every day."], answer:0 },
+      { type:"picture", tense:"simple", signal:"always", scene:"sleep", hint:"the cat · sleep", sentence:"The cat always sleeps in the afternoon.", options:["The cat is always sleeping in the afternoon.","The cat always sleep in the afternoon.","The cat sleeps always now.","The cat always sleeps in the afternoon."], answer:3 },
+
+      /* ---- 8. NGHE VÀ CHỌN ---- */
+      { type:"listen", tense:"cont", signal:"now", sentence:"She is riding a bike now.", options:["Hiện tại đơn — thói quen","Hiện tại tiếp diễn — đang diễn ra"], answer:1 },
+      { type:"listen", tense:"simple", signal:"every day", sentence:"He gets up at six every day.", options:["Hiện tại đơn — thói quen","Hiện tại tiếp diễn — đang diễn ra"], answer:0 },
+      { type:"listen", tense:"cont", signal:"Look!", sentence:"Look! The ducks are swimming.", options:["Hiện tại đơn — thói quen","Hiện tại tiếp diễn — đang diễn ra"], answer:1 },
+      { type:"listen", tense:"simple", signal:"usually", sentence:"They usually walk to school.", options:["Hiện tại đơn — thói quen","Hiện tại tiếp diễn — đang diễn ra"], answer:0 },
+      { type:"listen", tense:"cont", signal:"right now", sentence:"We are having lunch right now.", options:["Hiện tại đơn — thói quen","Hiện tại tiếp diễn — đang diễn ra"], answer:1 },
+      { type:"listen", tense:"simple", signal:"often", sentence:"My grandma often tells funny stories.", options:["Hiện tại đơn — thói quen","Hiện tại tiếp diễn — đang diễn ra"], answer:0 },
+      { type:"listen", tense:"cont", signal:"at the moment", sentence:"The teacher is talking at the moment.", options:["Hiện tại đơn — thói quen","Hiện tại tiếp diễn — đang diễn ra"], answer:1 },
+      { type:"listen", tense:"simple", signal:"never", sentence:"He never eats fish.", options:["Hiện tại đơn — thói quen","Hiện tại tiếp diễn — đang diễn ra"], answer:0 }
+    ];
+
+    const TYPE_INFO = {
+      hunt:     { name: "Săn dấu hiệu",        time: 15, svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>', instr: "Tìm DẤU HIỆU nhận biết thì trong câu. Bấm vào dấu hiệu đúng!" },
+      classify: { name: "Phân loại câu",       time: 15, svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3L4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4"/></svg>', instr: "Câu này là THÓI QUEN hay ĐANG DIỄN RA? Nhìn dấu hiệu nhé!" },
+      choose:   { name: "Chọn thì đúng",       time: 20, svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>', instr: "Điền dạng đúng của động từ vào chỗ trống." },
+      conjugate:{ name: "Chia động từ",        time: 20, svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>', instr: "Chia động từ trong ngoặc cho đúng thì." },
+      arrange:  { name: "Sắp xếp từ thành câu", time: 30, svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h13"/></svg>', instr: "Bấm các từ theo thứ tự đúng để tạo thành câu. Bấm lại vào từ đã chọn để bỏ ra." },
+      fix:      { name: "Thám tử sửa lỗi",    time: 20, svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4.5 4.5 0 0 0-6 6L3 18l3 3 5.7-5.7a4.5 4.5 0 0 0 6-6L14 13l-3-3 3.7-3.7z"/></svg>', instr: "Câu này có một lỗi sai. Hãy chọn câu ĐÃ SỬA ĐÚNG!" },
+      picture:  { name: "Nhìn tranh đặt câu", time: 20, svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>', instr: "Nhìn tranh, từ gợi ý và dấu hiệu — chọn câu đúng nhất." },
+      listen:   { name: "Nghe và chọn",        time: 20, svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14v-2a9 9 0 0 1 18 0v2"/><path d="M3 14h3v7H3zM21 14h-3v7h3z"/></svg>', instr: "Bấm nút NGHE thật kỹ, nghe thấy dấu hiệu nào? Rồi chọn thì đúng." }
+    };
+    const TYPE_ORDER = ["hunt","classify","choose","conjugate","arrange","fix","picture","listen"];
+
+    /* =============== Hiển thị 1 câu hỏi ===============
+       handlers: { onAnswer(isCorrect, chosenText), locked() } — engine của Luyện tập / Game gắn vào */
+    function sentenceHTML(q){
+      let s = q.type === "fix" ? q.badSentence : q.sentence;
+      if (q.type === "conjugate" && q.verb){
+        s = s.replace("(" + q.verb + ")", "\u0001").replace("___", "\u0002");
+        let out = highlightSignals(esc(s));
+        out = out.split("\u0001").join('<span class="verb-hint">(' + esc(q.verb) + ")</span>");
+        out = out.split("\u0002").join('<span class="blank">?</span>');
+        return out;
+      }
+      if (q.sentence && q.sentence.indexOf("___") >= 0){
+        const parts = q.sentence.split("___");
+        return highlightSignals(esc(parts[0])) + '<span class="blank">?</span>' + highlightSignals(esc(parts[1] || ""));
+      }
+      return highlightSignals(s);
+    }
+
+    function renderQuestion(container, q, handlers){
+      container.innerHTML = "";
+      const wrap = document.createElement("div");
+
+      if (q.type === "listen"){
+        const box = document.createElement("div");
+        box.style.textAlign = "center";
+        box.innerHTML = '<p class="q-sub">' + esc(TYPE_INFO.listen.instr) + "</p>";
+        const btn = document.createElement("button");
+        btn.type = "button"; btn.className = "btn big teal";
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.4 5.6a9 9 0 0 1 0 12.8"/></svg> NGHE CÂU';
+        btn.addEventListener("click", () => { speak(q.sentence); handlers.onListen && handlers.onListen(); });
+        box.appendChild(btn);
+        const again = document.createElement("p");
+        again.className = "q-sub"; again.style.marginTop = "8px";
+        again.textContent = "Nghe chưa rõ? Bấm NGHE CÂU để nghe lại — nghe xong mới bắt đầu tính giờ.";
+        box.appendChild(again);
+        wrap.appendChild(box);
+      } else if (q.type === "picture"){
+        const box = document.createElement("div");
+        box.innerHTML = '<div class="scene-box"><svg viewBox="0 0 300 200" role="img" aria-label="Tranh minh họa">' + SCENES[q.scene] + "</svg></div>" +
+          '<div class="hint-chips"><span>Từ gợi ý: ' + esc(q.hint.replace(/·/g, "·")) + '</span><span>Dấu hiệu: <span class="sig ' + (q.tense === "simple" ? "s" : "c") + '">' + esc(q.signal) + "</span></span></div>" +
+          '<p class="q-sub" style="margin-top:10px">' + esc(TYPE_INFO.picture.instr) + "</p>";
+        wrap.appendChild(box);
+      } else if (q.type === "arrange"){
+        const head = document.createElement("div");
+        head.innerHTML = '<p class="q-sub">' + esc(TYPE_INFO.arrange.instr) + '</p><p class="q-sub">Dấu hiệu của câu này: <span class="sig ' + (q.tense === "simple" ? "s" : "c") + '">' + esc(q.signal) + "</span></p>";
+        wrap.appendChild(head);
+        const line = document.createElement("div");
+        line.className = "answer-line"; line.id = "arrange-line";
+        line.innerHTML = '<span class="placeholder">Bấm các từ ở dưới để ghép câu…</span>';
+        wrap.appendChild(line);
+        const bank = document.createElement("div");
+        bank.className = "word-bank";
+        const chosen = [];
+        const chips = shuffle(q.words.map((w, i) => ({ w, i })));
+        const chipEls = [];
+        function refreshLine(){
+          line.innerHTML = "";
+          if (!chosen.length){ line.innerHTML = '<span class="placeholder">Bấm các từ ở dưới để ghép câu…</span>'; return; }
+          chosen.forEach((c, pos) => {
+            const b = document.createElement("button");
+            b.type = "button"; b.className = "word-chip in-answer"; b.textContent = c.w;
+            b.addEventListener("click", () => {
+              if (handlers.locked()) return;
+              chosen.splice(pos, 1);
+              chipEls[c.i].classList.remove("used");
+              sfx.click(); refreshLine();
+            });
+            line.appendChild(b);
+          });
+        }
+        chips.forEach(c => {
+          const b = document.createElement("button");
+          b.type = "button"; b.className = "word-chip"; b.textContent = c.w;
+          b.addEventListener("click", () => {
+            if (handlers.locked()) return;
+            chosen.push(c); b.classList.add("used"); sfx.click(); refreshLine();
+          });
+          chipEls[c.i] = b;
+          bank.appendChild(b);
+        });
+        wrap.appendChild(bank);
+        const checkRow = document.createElement("div");
+        checkRow.style.textAlign = "center";
+        const checkBtn = document.createElement("button");
+        checkBtn.type = "button"; checkBtn.className = "btn big teal"; checkBtn.textContent = "Kiểm tra câu";
+        checkBtn.addEventListener("click", () => {
+          if (handlers.locked()) return;
+          if (chosen.length !== q.words.length){ toast("Hãy chọn đủ tất cả các từ đã!"); return; }
+          const built = chosen.map(c => c.w).join(" ").replace(/\s+([.,!?])/g, "$1");
+          handlers.onAnswer(built === q.sentence, built);
+        });
+        checkRow.appendChild(checkBtn);
+        wrap.appendChild(checkRow);
+        handlers.extra = { getBuilt: () => chosen.map(c => c.w).join(" ").replace(/\s+([.,!?])/g, "$1") };
+      } else {
+        const p = document.createElement("p");
+        p.className = "q-sentence";
+        p.innerHTML = sentenceHTML(q);
+        wrap.appendChild(p);
+        const sub = document.createElement("p");
+        sub.className = "q-sub";
+        sub.textContent = TYPE_INFO[q.type].instr;
+        wrap.appendChild(sub);
+        if (q.type === "hunt" || q.type === "fix"){
+          const row = document.createElement("div");
+          row.style.textAlign = "center";
+          const sb = document.createElement("button");
+          sb.type = "button"; sb.className = "speak-btn";
+          sb.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg> Nghe câu này';
+          sb.addEventListener("click", () => speak(q.type === "fix" ? q.badSentence : q.sentence));
+          row.appendChild(sb);
+          wrap.appendChild(row);
+        }
+      }
+
+      if (q.type !== "arrange"){
+        const opts = document.createElement("div");
+        opts.className = "opts";
+        q.options.forEach((opt, i) => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = "opt-btn" + (q.options.length === 2 ? " big-two" : "");
+          b.textContent = opt;
+          b.dataset.idx = String(i);
+          b.addEventListener("click", () => {
+            if (handlers.locked()) return;
+            handlers.onAnswer(i === q.answer, opt, b, opts);
+          });
+          opts.appendChild(b);
+        });
+        wrap.appendChild(opts);
+      }
+
+      const fb = document.createElement("div");
+      fb.className = "feedback"; fb.id = "q-feedback";
+      wrap.appendChild(fb);
+      container.appendChild(wrap);
+      return fb;
+    }
+
+    function showFeedback(fb, ok, q, extraHTML){
+      fb.className = "feedback show " + (ok ? "ok" : "no");
+      fb.innerHTML = '<span class="fb-title">' + (ok ? "Đúng rồi! Giỏi lắm!" : "Chưa đúng — cùng xem vì sao nhé!") + "</span>" +
+        "<span>Đáp án đúng: <strong>" + esc(q.type === "arrange" ? q.sentence : q.options[q.answer]) + "</strong></span><br>" +
+        explainText(q) + (extraHTML || "");
+    }
+    function markOptions(container, q, chosenBtn){
+      $$(".opt-btn", container).forEach(b => {
+        b.disabled = true;
+        if (Number(b.dataset.idx) === q.answer) b.classList.add("right");
+        else if (b === chosenBtn) b.classList.add("wrong");
+      });
+    }
+
+    /* =============== Điều hướng tab =============== */
+    function gotoTab(name){
+      $$(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+      $$("section.page").forEach(p => p.classList.toggle("show", p.id === "page-" + name));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    $$(".tab-btn").forEach(b => b.addEventListener("click", () => { sfx.click(); gotoTab(b.dataset.tab); }));
+    document.addEventListener("click", e => {
+      const g = e.target.closest("[data-goto]");
+      if (g) gotoTab(g.getAttribute("data-goto"));
+    });
+
+    /* =============== Đồng hồ đếm ngược dùng chung =============== */
+    function makeTimer(onTimeout){
+      let iv = null, remain = 0, total = 0, lastWhole = -1;
+      return {
+        start(seconds){
+          this.stop();
+          total = remain = seconds; lastWhole = -1;
+          const fill = $("#timer-fill"), num = $("#timer-num");
+          const paint = () => {
+            const pct = total ? Math.max(0, (remain / total) * 100) : 0;
+            fill.style.width = pct + "%";
+            fill.className = "timer-fill" + (pct <= 25 ? " low" : pct <= 50 ? " mid" : "");
+            num.textContent = "⏱ " + Math.max(0, Math.ceil(remain)) + "s";
+            num.classList.toggle("low", pct <= 25);
+          };
+          paint();
+          iv = setInterval(() => {
+            remain -= 0.1;
+            paint();
+            const whole = Math.ceil(remain);
+            if (whole !== lastWhole){ lastWhole = whole; if (whole <= 5 && whole > 0) sfx.tick(); }
+            if (remain <= 0){ this.stop(); onTimeout(); }
+          }, 100);
+        },
+        stop(){ if (iv) { clearInterval(iv); iv = null; } },
+        elapsed(){ return total - remain; }
+      };
+    }
+
+    /* =============== PHẦN 2: LUYỆN TẬP =============== */
+    const practice = { deck: [], idx: 0, score: 0, results: [], locked: false };
+    function buildPracticeDeck(){
+      practice.deck = shuffle(getPool().slice()).slice(0, 10);
+      practice.idx = 0; practice.score = 0; practice.results = [];
+    }
+    function startPractice(){
+      buildPracticeDeck();
+      $("#practice-start").classList.add("hidden");
+      $("#practice-result").classList.add("hidden");
+      $("#practice-play").classList.remove("hidden");
+      renderPracticeQ();
+    }
+    function renderPracticeQ(){
+      const q = practice.deck[practice.idx];
+      practice.locked = false;
+      $("#practice-badge").innerHTML = TYPE_INFO[q.type].svg.replace('width="24"','') + " " + esc(TYPE_INFO[q.type].name);
+      $("#practice-count").textContent = "Câu " + (practice.idx + 1) + " / " + practice.deck.length + " · Điểm: " + practice.score;
+      const dots = $("#practice-dots");
+      dots.innerHTML = "";
+      practice.deck.forEach((_, i) => {
+        const d = document.createElement("span");
+        if (practice.results[i]) d.className = practice.results[i].ok ? "ok" : "no";
+        else if (i === practice.idx) d.className = "done";
+        dots.appendChild(d);
+      });
+      $("#practice-next").classList.add("hidden");
+      renderQuestion($("#practice-body"), q, {
+        locked: () => practice.locked,
+        onAnswer(ok, chosenText, btn, opts){
+          if (practice.locked) return;
+          practice.locked = true;
+          if (btn) markOptions($("#practice-body"), q, btn);
+          $$(".word-chip", $("#practice-body")).forEach(c => c.style.pointerEvents = "none");
+          const fb = $("#q-feedback", $("#practice-body"));
+          showFeedback(fb, ok, q);
+          if (ok){ practice.score += 10; sfx.correct(); } else { sfx.wrong(); }
+          practice.results.push({ q, ok, chosen: chosenText });
+          $("#practice-count").textContent = "Câu " + (practice.idx + 1) + " / " + practice.deck.length + " · Điểm: " + practice.score;
+          $("#practice-next").textContent = practice.idx === practice.deck.length - 1 ? "Xem kết quả →" : "Câu tiếp theo →";
+          $("#practice-next").classList.remove("hidden");
+        }
+      });
+    }
+    $("#practice-begin").addEventListener("click", () => { sfx.click(); startPractice(); });
+    $("#practice-shuffle").addEventListener("click", () => { sfx.click(); buildPracticeDeck(); toast("Đã trộn bộ câu mới. Bấm Bắt đầu để chơi!"); });
+    $("#practice-again").addEventListener("click", () => { sfx.click(); startPractice(); });
+    $("#practice-next").addEventListener("click", () => {
+      sfx.click();
+      practice.idx++;
+      if (practice.idx >= practice.deck.length) finishPractice();
+      else renderPracticeQ();
+    });
+    function finishPractice(){
+      $("#practice-play").classList.add("hidden");
+      const res = $("#practice-result");
+      res.classList.remove("hidden");
+      const right = practice.results.filter(r => r.ok).length;
+      $("#practice-score").textContent = right + " / " + practice.results.length + " câu đúng";
+      $("#practice-verdict").textContent =
+        right >= 9 ? "Xuất sắc! Em đã là cao thủ phân biệt hai thì." :
+        right >= 7 ? "Rất tốt! Xem lại vài câu sai dưới đây là hoàn hảo." :
+        right >= 5 ? "Khá rồi! Ôn lại phần Mật mã dấu hiệu rồi luyện tiếp nhé." :
+                     "Đừng buồn! Quay lại Học nhanh, nhớ mật mã dấu hiệu rồi thử lại.";
+      const box = $("#practice-review");
+      box.innerHTML = "";
+      practice.results.filter(r => !r.ok).forEach(r => {
+        const div = document.createElement("div");
+        div.className = "review-item";
+        div.innerHTML = '<span class="rq">' + sentenceHTML(r.q) + "</span><br>" +
+          "Em chọn: <strong>" + esc(r.chosen) + "</strong> · Đáp án đúng: <strong>" + esc(r.q.type === "arrange" ? r.q.sentence : r.q.options[r.q.answer]) + "</strong><br>" + explainText(r.q);
+        box.appendChild(div);
+      });
+      if (!practice.results.some(r => !r.ok))
+        box.innerHTML = '<div class="review-item ok">Không sai câu nào. Tuyệt vời!</div>';
+    }
+
+    /* =============== PHẦN 3: GAME CHIA ĐỘI =============== */
+    const TEAM_COLORS = ["#ef476f","#3a86ff","#ffb703","#22b573","#9b5de5","#ff7b00","#00b4d8","#e63946"];
+    const DEFAULT_TEAMS = [
+      { name: "Đội Hổ",    color: "#ef476f", animal: "tiger" },
+      { name: "Đội Gấu",   color: "#3a86ff", animal: "panda" },
+      { name: "Đội Ếch",   color: "#22b573", animal: "frog" },
+      { name: "Đội Cú",    color: "#9b5de5", animal: "owl" }
+    ];
+    let teamCount = 3;
+    let teamDrafts = DEFAULT_TEAMS.map(t => ({ ...t }));
+
+    function renderTeamSetup(){
+      $("#team-count-row").innerHTML = "";
+      [2,3,4].forEach(n => {
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "count-btn" + (n === teamCount ? " active" : "");
+        b.textContent = n + " đội";
+        b.addEventListener("click", () => { sfx.click(); teamCount = n; renderTeamSetup(); });
+        $("#team-count-row").appendChild(b);
+      });
+      const box = $("#team-edit");
+      box.innerHTML = "";
+      for (let i = 0; i < teamCount; i++){
+        const d = teamDrafts[i];
+        const card = document.createElement("div");
+        card.className = "team-edit-card";
+        const head = document.createElement("div");
+        head.className = "t-head";
+        head.innerHTML = '<span class="mascot-slot">' + animalSVG(d.animal, 52) + '</span>';
+        const input = document.createElement("input");
+        input.type = "text"; input.value = d.name; input.maxLength = 18;
+        input.setAttribute("aria-label", "Tên đội " + (i + 1));
+        input.addEventListener("input", () => { teamDrafts[i].name = input.value; });
+        head.appendChild(input);
+        card.appendChild(head);
+
+        const cl = document.createElement("div");
+        cl.className = "pick-row";
+        cl.innerHTML = '<span class="pick-label">Màu đội</span>';
+        TEAM_COLORS.forEach(c => {
+          const dot = document.createElement("button");
+          dot.type = "button"; dot.className = "color-dot" + (c === d.color ? " active" : "");
+          dot.style.background = c; dot.setAttribute("aria-label", "Chọn màu " + c);
+          dot.addEventListener("click", () => {
+            sfx.click(); teamDrafts[i].color = c;
+            $$(".color-dot", cl).forEach(x => x.classList.remove("active")); dot.classList.add("active");
+          });
+          cl.appendChild(dot);
+        });
+        card.appendChild(cl);
+
+        const al = document.createElement("div");
+        al.className = "pick-row";
+        al.innerHTML = '<span class="pick-label">Linh vật</span>';
+        ANIMAL_KEYS.forEach(k => {
+          const ap = document.createElement("button");
+          ap.type = "button"; ap.className = "animal-pick" + (k === d.animal ? " active" : "");
+          ap.innerHTML = animalSVG(k, 38);
+          ap.setAttribute("aria-label", "Chọn linh vật " + ANIMALS[k].name);
+          ap.addEventListener("click", () => {
+            sfx.click(); teamDrafts[i].animal = k;
+            $$(".animal-pick", al).forEach(x => x.classList.remove("active")); ap.classList.add("active");
+            $(".mascot-slot", card).innerHTML = animalSVG(k, 52);
+          });
+          al.appendChild(ap);
+        });
+        card.appendChild(al);
+        box.appendChild(card);
+      }
+    }
+
+    const game = {
+      teams: [], deck: [], idx: 0, turn: 0, phase: "main", // main | steal | revealed
+      answering: 0, locked: false, mistakes: [], timer: null, startedAt: 0
+    };
+    game.timer = makeTimer(() => onGameTimeout());
+
+    function buildGameDeck(){
+      const pool = getPool();
+      const byType = {};
+      TYPE_ORDER.forEach(t => { byType[t] = shuffle(pool.filter(q => q.type === t)); });
+      const deck = [];
+      let round = shuffle(TYPE_ORDER.slice());
+      let ri = 0, guard = 0;
+      while (deck.length < 24 && guard++ < 500){
+        const t = round[ri % round.length]; ri++;
+        if (byType[t].length) deck.push(byType[t].pop());
+        if (ri % round.length === 0) round = shuffle(TYPE_ORDER.slice());
+      }
+      // Dự phòng nếu ngân hàng thiếu (không xảy ra với 64 câu có sẵn)
+      if (deck.length < 24){
+        const rest = shuffle(pool.filter(q => !deck.includes(q)));
+        while (deck.length < 24 && rest.length) deck.push(rest.pop());
+      }
+      return deck;
+    }
+
+    function startGame(){
+      game.teams = teamDrafts.slice(0, teamCount).map((d, i) => ({
+        name: (d.name || "").trim() || ("Đội " + (i + 1)),
+        color: d.color, animal: d.animal, score: 0, correct: 0, steals: 0
+      }));
+      game.deck = buildGameDeck();
+      game.idx = 0; game.mistakes = [];
+      $("#game-setup").classList.add("hidden");
+      $("#game-end").classList.add("hidden");
+      $("#game-review").classList.add("hidden");
+      $("#game-play").classList.remove("hidden");
+      renderScoreboard();
+      renderGameQ();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderScoreboard(){
+      const sb = $("#scoreboard");
+      sb.style.gridTemplateColumns = "repeat(auto-fit,minmax(230px,1fr))";
+      sb.innerHTML = "";
+      game.teams.forEach((t, i) => {
+        const card = document.createElement("div");
+        card.className = "score-card" + (game.phase !== "revealed" && game.answering === i && $("#game-play").classList.contains("hidden") === false ? " turn" : "");
+        card.style.setProperty("--tc", t.color);
+        card.innerHTML = animalSVG(t.animal, 54).replace("<svg", '<svg class="mascot"') +
+          '<div><div class="t-name">' + esc(t.name) + '</div><div class="t-stats">Đúng: ' + t.correct + " câu" + (t.steals ? " · Cướp điểm: " + t.steals : "") + "</div></div>" +
+          '<div class="t-score" style="color:' + t.color + '">' + t.score + "</div>";
+        const pm = document.createElement("div");
+        pm.className = "pm";
+        const plus = document.createElement("button");
+        plus.type = "button"; plus.textContent = "+"; plus.title = "Giáo viên cộng 5 điểm cho " + t.name;
+        plus.addEventListener("click", () => { t.score += 5; renderScoreboard(); toast(t.name + " được cộng 5 điểm → " + t.score + " điểm."); });
+        const minus = document.createElement("button");
+        minus.type = "button"; minus.textContent = "−"; minus.title = "Giáo viên trừ 5 điểm của " + t.name;
+        minus.addEventListener("click", () => { t.score = Math.max(0, t.score - 5); renderScoreboard(); toast(t.name + " bị trừ 5 điểm → " + t.score + " điểm."); });
+        pm.appendChild(plus); pm.appendChild(minus);
+        card.appendChild(pm);
+        sb.appendChild(card);
+      });
+    }
+
+    function currentQ(){ return game.deck[game.idx]; }
+
+    function renderGameQ(){
+      const q = currentQ();
+      game.turn = game.idx % game.teams.length;
+      game.answering = game.turn;
+      game.phase = "main";
+      game.locked = false;
+      game.startedAt = Date.now();
+      $("#game-progress").textContent = "Câu " + (game.idx + 1) + " / " + game.deck.length + " · Vòng " + (Math.floor(game.idx / game.teams.length) + 1);
+      $("#game-badge").innerHTML = TYPE_INFO[q.type].svg + " " + esc(TYPE_INFO[q.type].name) + " · " + TYPE_INFO[q.type].time + " giây";
+      const tb = $("#turn-banner");
+      const t = game.teams[game.turn];
+      tb.innerHTML = 'Lượt của <span class="team-pill" style="background:' + t.color + '">' + esc(t.name) + "</span>";
+      $("#steal-box").classList.remove("show");
+      $("#game-next").classList.add("hidden");
+      $("#game-speak-q").classList.toggle("hidden", !(q.type === "choose" || q.type === "conjugate" || q.type === "classify"));
+      renderScoreboard();
+      renderQuestion($("#game-body"), q, {
+        locked: () => game.locked,
+        onListen(){ if (game.phase === "main" || game.phase === "steal") game.timer.start(TYPE_INFO[q.type].time); },
+        onAnswer(ok, chosenText, btn){ handleGameAnswer(ok, chosenText, btn); }
+      });
+      if (q.type !== "listen") game.timer.start(TYPE_INFO[q.type].time);
+      else { $("#timer-fill").style.width = "100%"; $("#timer-num").textContent = "⏱ Nghe trước nhé"; }
+    }
+
+    function disableAllOptions(){
+      $$(".opt-btn", $("#game-body")).forEach(b => { b.disabled = true; });
+      $$(".word-chip", $("#game-body")).forEach(c => { c.style.pointerEvents = "none"; });
+    }
+    function enableStealOptions(excludeBtn){
+      $$(".opt-btn", $("#game-body")).forEach(b => { if (b !== excludeBtn) b.disabled = false; });
+    }
+
+    function handleGameAnswer(ok, chosenText, btn){
+      if (game.locked) return;
+      const q = currentQ();
+      const team = game.teams[game.answering];
+      if (ok){
+        game.locked = true;
+        game.timer.stop();
+        const fast = game.timer.elapsed() < 5;
+        if (game.phase === "main"){
+          const pts = fast ? 15 : 10;
+          team.score += pts; team.correct++;
+          if (btn) markOptions($("#game-body"), q, btn); else disableAllOptions();
+          showFeedback($("#q-feedback", $("#game-body")), true, q,
+            "<br><strong>+" + pts + " điểm</strong> cho " + esc(team.name) + (fast ? " — trả lời nhanh dưới 5 giây, thưởng thêm +5!" : ""));
+          sfx.correct();
+        } else {
+          team.score += 5; team.steals++;
+          if (btn) markOptions($("#game-body"), q, btn); else disableAllOptions();
+          $("#steal-box").classList.remove("show");
+          showFeedback($("#q-feedback", $("#game-body")), true, q,
+            "<br><strong>CƯỚP ĐIỂM THÀNH CÔNG! +5 điểm</strong> cho " + esc(team.name) + "!");
+          sfx.correct();
+        }
+        afterReveal();
+      } else {
+        sfx.wrong();
+        if (btn) { btn.classList.add("wrong"); btn.disabled = true; }
+        if (game.phase === "main"){
+          game.phase = "steal";
+          game.timer.stop();
+          disableAllOptions();
+          game.mistakes.push({ q, teamName: team.name, chosen: chosenText });
+          const fb = $("#q-feedback", $("#game-body"));
+          fb.className = "feedback show no";
+          fb.innerHTML = '<span class="fb-title">' + esc(team.name) + ' chưa đúng rồi!</span> Đừng lo, không bị trừ điểm đâu. Các đội khác ơi — cơ hội <strong>cướp +5 điểm</strong> đây!';
+          offerSteal(btn);
+        } else {
+          game.locked = true;
+          game.timer.stop();
+          if (btn) markOptions($("#game-body"), q, btn); else disableAllOptions();
+          $("#steal-box").classList.remove("show");
+          showFeedback($("#q-feedback", $("#game-body")), false, q,
+            "<br>Cướp điểm chưa thành công — cả lớp cùng nhớ đáp án này nhé!");
+          afterReveal();
+        }
+      }
+      renderScoreboard();
+    }
+
+    function offerSteal(excludeBtn){
+      const box = $("#steal-box");
+      const list = $("#steal-teams");
+      list.innerHTML = "";
+      game.teams.forEach((t, i) => {
+        if (i === game.turn) return;
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "steal-btn"; b.style.background = t.color;
+        b.textContent = t.name + " cướp điểm";
+        b.addEventListener("click", () => {
+          sfx.steal();
+          game.answering = i;
+          box.classList.remove("show");
+          $("#turn-banner").innerHTML = '<span class="team-pill" style="background:' + t.color + '">' + esc(t.name) + "</span> đang CƯỚP ĐIỂM (+5 nếu đúng)";
+          enableStealOptions(excludeBtn);
+          renderScoreboard();
+          toast(t.name + " trả lời trong 10 giây nhé!");
+          game.timer.start(10);
+        });
+        list.appendChild(b);
+      });
+      const pass = document.createElement("button");
+      pass.type = "button"; pass.className = "steal-btn"; pass.style.background = "var(--muted)";
+      pass.textContent = "Không đội nào cướp";
+      pass.addEventListener("click", () => { sfx.click(); revealAnswer("Chưa đội nào cướp điểm. Cả lớp xem đáp án nhé!"); });
+      list.appendChild(pass);
+      box.classList.add("show");
+    }
+
+    function onGameTimeout(){
+      if (game.locked || $("#game-play").classList.contains("hidden")) return;
+      const q = currentQ();
+      if (game.phase === "main"){
+        sfx.timeout();
+        game.phase = "steal";
+        disableAllOptions();
+        game.mistakes.push({ q, teamName: game.teams[game.turn].name, chosen: "(hết giờ)" });
+        const fb = $("#q-feedback", $("#game-body"));
+        fb.className = "feedback show no";
+        fb.innerHTML = '<span class="fb-title">Hết giờ!</span> ' + esc(game.teams[game.turn].name) + " chưa kịp trả lời. Đội khác có muốn <strong>cướp +5 điểm</strong> không?";
+        offerSteal(null);
+        renderScoreboard();
+      } else if (game.phase === "steal"){
+        sfx.timeout();
+        revealAnswer("Hết giờ cướp điểm rồi. Cả lớp xem đáp án nhé!");
+      }
+    }
+
+    function revealAnswer(prefix){
+      if (game.locked) return;
+      game.locked = true;
+      game.timer.stop();
+      const q = currentQ();
+      $$(".opt-btn", $("#game-body")).forEach(b => {
+        b.disabled = true;
+        if (Number(b.dataset.idx) === q.answer) b.classList.add("right");
+      });
+      $$(".word-chip", $("#game-body")).forEach(c => { c.style.pointerEvents = "none"; });
+      $("#steal-box").classList.remove("show");
+      showFeedback($("#q-feedback", $("#game-body")), false, q, prefix ? "<br>" + prefix : "");
+      afterReveal();
+      renderScoreboard();
+    }
+
+    function afterReveal(){
+      game.phase = "revealed";
+      const next = $("#game-next");
+      next.textContent = game.idx === game.deck.length - 1 ? "Xem kết quả chung cuộc →" : "Câu tiếp theo →";
+      next.classList.remove("hidden");
+    }
+
+    $("#game-next").addEventListener("click", () => {
+      sfx.click();
+      game.idx++;
+      if (game.idx >= game.deck.length) finishGame();
+      else renderGameQ();
+    });
+    $("#game-speak-q").addEventListener("click", () => { const q = currentQ(); if (q) speak(q.type === "fix" ? q.badSentence : q.sentence.replace("___", "…")); });
+    $("#tc-show-answer").addEventListener("click", () => { if (!game.locked) revealAnswer("Giáo viên đã hiện đáp án."); });
+    $("#tc-skip").addEventListener("click", () => {
+      if (game.locked && game.phase !== "revealed") return;
+      game.timer.stop();
+      if (!game.locked) game.mistakes.push({ q: currentQ(), teamName: game.teams[game.turn].name, chosen: "(giáo viên cho qua)" });
+      game.idx++;
+      if (game.idx >= game.deck.length) finishGame(); else renderGameQ();
+    });
+    $("#tc-new-deck").addEventListener("click", () => {
+      sfx.click();
+      game.timer.stop();
+      game.deck = buildGameDeck(); game.idx = 0; game.mistakes = [];
+      game.teams.forEach(t => { t.score = 0; t.correct = 0; t.steals = 0; });
+      $("#game-end").classList.add("hidden");
+      $("#game-play").classList.remove("hidden");
+      renderScoreboard(); renderGameQ();
+      toast("Đã tạo bộ 24 câu mới và đặt lại điểm.");
+    });
+    $("#tc-reset").addEventListener("click", () => { $("#tc-new-deck").click(); });
+    $("#tc-setup").addEventListener("click", () => {
+      game.timer.stop();
+      $("#game-play").classList.add("hidden");
+      $("#game-end").classList.add("hidden");
+      $("#game-setup").classList.remove("hidden");
+    });
+    $("#game-start").addEventListener("click", () => { sfx.click(); startGame(); });
+    $("#game-random-note").addEventListener("click", () => toast("Mỗi ván, web rút ngẫu nhiên 24 câu trong ngân hàng " + getPool().length + " câu — đủ 8 dạng bài, mỗi dạng ít nhất 2 lần."));
+    $("#game-replay").addEventListener("click", () => { sfx.click(); startGame(); });
+    $("#game-back-setup").addEventListener("click", () => {
+      $("#game-end").classList.add("hidden");
+      $("#game-setup").classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    $("#game-review-btn").addEventListener("click", () => {
+      const box = $("#game-review");
+      box.classList.toggle("hidden");
+      if (!box.classList.contains("hidden")){
+        box.innerHTML = "<h3 style='margin:0 0 10px'>Các câu cả lớp đã sai — ôn lại ngay</h3>";
+        if (!game.mistakes.length) box.innerHTML += '<div class="review-item ok">Không có câu sai nào. Cả lớp quá giỏi!</div>';
+        game.mistakes.forEach(m => {
+          const div = document.createElement("div");
+          div.className = "review-item";
+          div.innerHTML = '<span class="rq">' + sentenceHTML(m.q) + "</span><br>" +
+            esc(m.teamName) + " đã chọn: <strong>" + esc(m.chosen) + "</strong> · Đáp án đúng: <strong>" + esc(m.q.type === "arrange" ? m.q.sentence : m.q.options[m.q.answer]) + "</strong><br>" + explainText(m.q);
+          box.appendChild(div);
+        });
+        box.scrollIntoView({ behavior: "smooth" });
+      }
+    });
+
+    function finishGame(){
+      game.timer.stop();
+      $("#game-play").classList.add("hidden");
+      const end = $("#game-end");
+      end.classList.remove("hidden");
+      const sorted = game.teams.slice().sort((a, b) => b.score - a.score);
+      const top = sorted[0].score;
+      const winners = game.teams.filter(t => t.score === top);
+      $("#winner-name").innerHTML = winners.map(t =>
+        '<span style="color:' + t.color + '">' + esc(t.name) + "</span>").join(" &amp; ") +
+        ' <span style="font-size:.55em">— ' + top + " điểm</span>";
+      const tbl = $("#game-summary");
+      tbl.innerHTML = "<tr><th>Hạng</th><th>Đội</th><th class='num'>Điểm</th><th class='num'>Câu đúng</th><th class='num'>Cướp điểm</th></tr>" +
+        sorted.map((t, i) => "<tr><td><span class='rank-badge" + (i === 0 ? " first" : "") + "'>" + (i + 1) + "</span></td><td>" +
+          animalSVG(t.animal, 30) + " " + esc(t.name) + "</td><td class='num'>" + t.score + "</td><td class='num'>" + t.correct + "</td><td class='num'>" + t.steals + "</td></tr>").join("");
+      end.scrollIntoView({ behavior: "smooth" });
+      sfx.win();
+      launchConfetti();
+    }
+
+    /* =============== Pháo giấy =============== */
+    function launchConfetti(){
+      const cv = $("#confetti-canvas");
+      const ctx = cv.getContext("2d");
+      cv.width = window.innerWidth; cv.height = window.innerHeight;
+      cv.classList.remove("hidden");
+      const colors = ["#ef476f","#3a86ff","#ffb703","#22b573","#9b5de5","#ff7b00"];
+      const parts = [];
+      for (let i = 0; i < 160; i++){
+        parts.push({
+          x: Math.random() * cv.width, y: -20 - Math.random() * cv.height * 0.5,
+          w: 7 + Math.random() * 7, h: 10 + Math.random() * 10,
+          vy: 2 + Math.random() * 3.4, vx: -1.4 + Math.random() * 2.8,
+          rot: Math.random() * Math.PI, vr: -0.12 + Math.random() * 0.24,
+          color: colors[i % colors.length]
+        });
+      }
+      const t0 = performance.now();
+      (function frame(now){
+        const el = now - t0;
+        ctx.clearRect(0, 0, cv.width, cv.height);
+        parts.forEach(p => {
+          p.y += p.vy; p.x += p.vx + Math.sin((p.y + el) / 90) * 0.7; p.rot += p.vr;
+          if (p.y > cv.height + 30){ p.y = -20; p.x = Math.random() * cv.width; }
+          ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+          ctx.fillStyle = p.color; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        });
+        if (el < 4200) requestAnimationFrame(frame);
+        else { ctx.clearRect(0, 0, cv.width, cv.height); cv.classList.add("hidden"); }
+      })(t0);
+    }
+
+    /* =============== THÊM CÂU HỎI (dùng ngay trong buổi học) =============== */
+    const customQuestions = [];
+    function getPool(){ return BANK.concat(customQuestions); }
+    function renderCustomList(){
+      const box = $("#custom-list");
+      box.innerHTML = "";
+      if (!customQuestions.length){
+        box.innerHTML = '<p class="sub" style="margin:0">Chưa có câu tự thêm trong buổi học này. Ngân hàng có sẵn: ' + BANK.length + " câu.</p>";
+        return;
+      }
+      const title = document.createElement("h3");
+      title.textContent = "Câu đã thêm (" + customQuestions.length + ") — đang dùng trong Luyện tập & Game";
+      box.appendChild(title);
+      customQuestions.forEach((q, i) => {
+        const div = document.createElement("div");
+        div.className = "custom-item";
+        div.innerHTML = "<span><strong>" + esc(TYPE_INFO[q.type].name) + ":</strong> " + esc(q.sentence) + "<br>Đáp án đúng: <strong>" + esc(q.options[q.answer]) + "</strong> · Dấu hiệu: " + esc(q.signal) + "</span>";
+        const del = document.createElement("button");
+        del.type = "button"; del.className = "btn ghost"; del.textContent = "Xóa";
+        del.addEventListener("click", () => { customQuestions.splice(i, 1); renderCustomList(); toast("Đã xóa câu hỏi."); });
+        div.appendChild(del);
+        box.appendChild(div);
+      });
+    }
+    $("#add-form").addEventListener("submit", e => {
+      e.preventDefault();
+      const type = $("#f-type").value;
+      const sentence = $("#f-sentence").value.trim();
+      const signal = $("#f-signal").value.trim();
+      const opts = [0,1,2,3].map(i => $("#f-opt" + i).value.trim()).filter(Boolean);
+      const correct = Number($("#f-correct").value);
+      if (opts.length < 2){ toast("Cần ít nhất 2 đáp án."); return; }
+      if (correct >= opts.length){ toast("Đáp án đúng phải là một trong các đáp án đã nhập."); return; }
+      if (signal && sentence.toLowerCase().indexOf(signal.toLowerCase().replace(/!$/, "")) < 0 && type !== "classify" && type !== "choose" && type !== "conjugate"){
+        toast("Lưu ý: dấu hiệu chưa xuất hiện trong câu — hãy kiểm tra lại chính tả của dấu hiệu.");
+      }
+      customQuestions.push({ type, tense: $("#f-tense").value, signal, sentence, options: opts, answer: correct });
+      renderCustomList();
+      e.target.reset();
+      toast("Đã thêm câu hỏi! Tổng ngân hàng giờ có " + getPool().length + " câu.");
+      sfx.correct();
+    });
+    $("#add-demo").addEventListener("click", () => {
+      $("#f-type").value = "choose";
+      $("#f-sentence").value = "She ___ her homework every evening.";
+      $("#f-signal").value = "every evening";
+      $("#f-opt0").value = "does"; $("#f-opt1").value = "is doing"; $("#f-opt2").value = "do"; $("#f-opt3").value = "";
+      $("#f-correct").value = "0"; $("#f-tense").value = "simple";
+      toast("Đã điền câu mẫu — bấm Lưu câu hỏi để thêm vào ngân hàng.");
+    });
+
+    /* =============== Khởi tạo =============== */
+    buildSignalChips();
+    renderFlash();
+    renderTeamSetup();
+    renderCustomList();
+    </script>
+  </body>
+</html>
