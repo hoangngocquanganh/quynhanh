@@ -13,6 +13,8 @@
     timerSeconds: 15,
     gameTeams: [],
     gameQuestions: [],
+    gameIndex: 0,
+    totalGameQuestions: 0,
     turnIndex: 0,
     currentQuestion: null
   };
@@ -97,7 +99,7 @@
   }
 
   function highlightSignals(sentence) {
-    const output = esc(sentence);
+    const output = esc(sentence || "");
     const signals = [...(window.SIGNAL_DEMO?.simple || []), ...(window.SIGNAL_DEMO?.cont || [])]
       .sort((a, b) => b[0].length - a[0].length);
 
@@ -239,8 +241,8 @@
       const button = document.createElement("button");
       button.type = "button";
       button.className = "opt-btn";
-      button.dataset.index = String(index);
       button.textContent = option;
+      button.dataset.index = String(index);
       button.addEventListener("click", () => {
         const isCorrect = index === q.answer;
         q.userAnswer = index;
@@ -361,7 +363,14 @@
       for (let i = 0; i < scratch.teamCount; i++) {
         const card = document.createElement("div");
         card.className = "team-edit-card";
-        card.innerHTML = `<label>Đội ${i + 1}</label><input type="text" value="Đội ${i + 1}" data-team-index="${i}" />`;
+        const label = document.createElement("label");
+        label.textContent = `Đội ${i + 1}`;
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = `Đội ${i + 1}`;
+        input.dataset.teamIndex = String(i);
+        card.appendChild(label);
+        card.appendChild(input);
         teamEdit.appendChild(card);
       }
     };
@@ -386,7 +395,14 @@
       teams.forEach((team, index) => {
         const item = document.createElement("div");
         item.className = "score-card";
-        item.innerHTML = `<div class="t-name">${team.name}</div><div class="t-score">${team.score}</div>`;
+        const nameEl = document.createElement("div");
+        nameEl.className = "t-name";
+        nameEl.textContent = team.name;
+        const scoreEl = document.createElement("div");
+        scoreEl.className = "t-score";
+        scoreEl.textContent = String(team.score);
+        item.appendChild(nameEl);
+        item.appendChild(scoreEl);
         if (index === scratch.turnIndex) item.style.borderColor = "#ef476f";
         board.appendChild(item);
       });
@@ -394,46 +410,77 @@
 
     const startGame = () => {
       scratch.gameTeams = getTeams();
-      scratch.gameQuestions = shuffle((window.QUESTION_BANK || []).slice());
+      if (!scratch.gameTeams.length) {
+        toast("Vui lòng nhập tên ít nhất 1 đội");
+        return;
+      }
+      const bank = shuffle((window.QUESTION_BANK || []).slice().concat(getCustomQuestions()));
+      const total = Math.min(scratch.teamCount * 3, bank.length || 0);
+      scratch.totalGameQuestions = total;
+      scratch.gameQuestions = bank.slice(0, total);
+      scratch.gameIndex = 0;
       scratch.turnIndex = 0;
       setup.classList.add("hidden");
       gamePlay.classList.remove("hidden");
+      renderScoreBoard(scratch.gameTeams);
       showCurrentQuestion();
     };
 
     const showCurrentQuestion = () => {
-      if (!scratch.gameQuestions.length) {
+      if (!scratch.gameQuestions || scratch.gameIndex >= scratch.gameQuestions.length) {
         finishGame();
         return;
       }
-      scratch.currentQuestion = scratch.gameQuestions.shift();
+
+      const q = scratch.gameQuestions[scratch.gameIndex];
       const team = scratch.gameTeams[scratch.turnIndex % scratch.gameTeams.length];
-      const q = scratch.currentQuestion;
-      progress.textContent = `Câu ${Math.max(1, 1 + (scratch.gameTeams.length * 3) - scratch.gameQuestions.length)} / ${Math.max(1, scratch.gameTeams.length * 3)}`;
+      progress.textContent = `Câu ${scratch.gameIndex + 1} / ${scratch.totalGameQuestions}`;
       turnBanner.textContent = `Lượt của ${team.name}`;
       gameBadge.textContent = q.tense === "simple" ? "Hiện tại đơn" : "Hiện tại tiếp diễn";
-      gameBody.innerHTML = `
-        <div class="question-box">
-          <div class="question-title">${highlightSignals(q.sentence || q.signal)}</div>
-          <div class="options">
-            ${q.options.map((option, index) => `<button class="opt-btn" data-qindex="${index}" type="button">${option}</button>`).join("")}
-          </div>
-        </div>
-      `;
+
+      const qWrap = document.createElement("div");
+      qWrap.className = "question-box";
+      const title = document.createElement("div");
+      title.className = "question-title";
+      title.innerHTML = highlightSignals(q.sentence || q.signal || "");
+      qWrap.appendChild(title);
+
+      const optionsWrap = document.createElement("div");
+      optionsWrap.className = "options";
+      if (Array.isArray(q.options) && q.options.length) {
+        q.options.forEach((option, index) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "opt-btn";
+          btn.textContent = option;
+          btn.dataset.qindex = String(index);
+          optionsWrap.appendChild(btn);
+        });
+      } else {
+        const note = document.createElement("div");
+        note.className = "feedback show no";
+        note.textContent = "Câu hỏi này không có tùy chọn trả lời.";
+        qWrap.appendChild(note);
+      }
+      qWrap.appendChild(optionsWrap);
+      gameBody.innerHTML = "";
+      gameBody.appendChild(qWrap);
+
       timerFill.style.width = "100%";
-      timerNum.textContent = "15";
-      let remaining = 15;
+      timerNum.textContent = String(scratch.timerSeconds);
+      let remaining = scratch.timerSeconds;
       clearInterval(scratch.timerHandle);
       scratch.timerHandle = setInterval(() => {
         remaining -= 1;
         timerNum.textContent = String(Math.max(0, remaining));
-        timerFill.style.width = `${(remaining / 15) * 100}%`;
+        timerFill.style.width = `${(remaining / scratch.timerSeconds) * 100}%`;
         if (remaining <= 0) {
           clearInterval(scratch.timerHandle);
           toast("Hết giờ! Câu được xem là sai.");
+          scratch.turnIndex = (scratch.turnIndex + 1) % scratch.gameTeams.length;
+          scratch.gameIndex += 1;
           setTimeout(() => {
-            if (scratch.gameQuestions.length > 0) {
-              scratch.turnIndex = (scratch.turnIndex + 1) % scratch.gameTeams.length;
+            if (scratch.gameIndex < scratch.totalGameQuestions) {
               renderScoreBoard(scratch.gameTeams);
               showCurrentQuestion();
             } else {
@@ -447,17 +494,18 @@
       gameBody.querySelectorAll(".opt-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
           clearInterval(scratch.timerHandle);
-          const isCorrect = Number(btn.dataset.qindex) === q.answer;
+          const picked = Number(btn.dataset.qindex);
+          const isCorrect = picked === q.answer;
           gameBody.querySelectorAll(".opt-btn").forEach((b) => {
-            const isAnswer = Number(b.dataset.qindex) === q.answer;
+            const bi = Number(b.dataset.qindex);
             b.disabled = true;
-            b.classList.toggle("right", isAnswer);
-            if (!isAnswer && Number(b.dataset.qindex) === Number(btn.dataset.qindex)) {
-              b.classList.add("wrong");
-            }
+            b.classList.toggle("right", bi === q.answer);
+            if (bi === picked && !isCorrect) b.classList.add("wrong");
           });
+
           if (isCorrect) {
-            team.score += 10;
+            const teamObj = scratch.gameTeams[scratch.turnIndex % scratch.gameTeams.length];
+            teamObj.score += 10;
             playSfx("correct");
             toast("Đúng! +10 điểm");
           } else {
@@ -471,25 +519,35 @@
 
     const finishGame = () => {
       clearInterval(scratch.timerHandle);
+      if (!scratch.gameTeams.length) return;
       const winner = scratch.gameTeams.slice().sort((a, b) => b.score - a.score)[0];
       document.getElementById("game-play").classList.add("hidden");
       gameEnd.classList.remove("hidden");
       document.getElementById("winner-name").textContent = winner.name;
       const summary = document.getElementById("game-summary");
-      summary.innerHTML = `<thead><tr><th>Đội</th><th>Điểm</th></tr></thead><tbody>${scratch.gameTeams.map((t) => `<tr><td>${t.name}</td><td>${t.score}</td></tr>`).join("")}</tbody>`;
+      const rows = scratch.gameTeams.map((t) => `<tr><td>${esc(t.name)}</td><td>${t.score}</td></tr>`).join("");
+      summary.innerHTML = `<thead><tr><th>Đội</th><th>Điểm</th></tr></thead><tbody>${rows}</tbody>`;
       playSfx("win");
     };
 
     document.getElementById("game-next").addEventListener("click", () => {
       document.getElementById("game-next").classList.add("hidden");
       scratch.turnIndex = (scratch.turnIndex + 1) % scratch.gameTeams.length;
+      scratch.gameIndex += 1;
       renderScoreBoard(scratch.gameTeams);
-      showCurrentQuestion();
+      if (scratch.gameIndex < scratch.totalGameQuestions) {
+        showCurrentQuestion();
+      } else {
+        finishGame();
+      }
     });
 
     gameStart.addEventListener("click", startGame);
     gameRandom.addEventListener("click", () => {
-      scratch.gameQuestions = shuffle((window.QUESTION_BANK || []).slice());
+      const bank = shuffle((window.QUESTION_BANK || []).slice().concat(getCustomQuestions()));
+      scratch.gameQuestions = bank.slice(0, Math.min(scratch.teamCount * 3, bank.length || 0));
+      scratch.totalGameQuestions = scratch.gameQuestions.length;
+      scratch.gameIndex = 0;
       toast("Đã xáo câu mới");
     });
 
@@ -511,16 +569,36 @@
     const list = document.getElementById("custom-list");
     const renderList = () => {
       const custom = getCustomQuestions();
-      list.innerHTML = custom.length ? custom.map((item, index) => `<div class="custom-item"><span>${index + 1}. ${esc(item.sentence)}</span><button class="btn ghost" type="button" data-remove-index="${index}">Xóa</button></div>`).join("") : "<div class=\"custom-item\"><span>Chưa có câu hỏi tùy chỉnh nào.</span></div>";
-      list.querySelectorAll("[data-remove-index]").forEach((button) => {
-        button.addEventListener("click", () => {
-          const idx = Number(button.dataset.removeIndex);
+      list.innerHTML = "";
+      if (!custom.length) {
+        const empty = document.createElement("div");
+        empty.className = "custom-item";
+        empty.innerHTML = "<span>Chưa có câu hỏi tùy chỉnh nào.</span>";
+        list.appendChild(empty);
+        return;
+      }
+
+      custom.forEach((item, index) => {
+        const row = document.createElement("div");
+        row.className = "custom-item";
+        const label = document.createElement("span");
+        label.textContent = `${index + 1}. ${item.sentence}`;
+        const remove = document.createElement("button");
+        remove.className = "btn ghost";
+        remove.type = "button";
+        remove.dataset.removeIndex = String(index);
+        remove.textContent = "Xóa";
+        remove.addEventListener("click", () => {
+          const idx = Number(remove.dataset.removeIndex);
           const next = getCustomQuestions();
           next.splice(idx, 1);
           saveCustomQuestions(next);
           renderList();
           toast("Đã xóa câu hỏi");
         });
+        row.appendChild(label);
+        row.appendChild(remove);
+        list.appendChild(row);
       });
     };
 
