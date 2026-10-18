@@ -239,13 +239,18 @@
       const button = document.createElement("button");
       button.type = "button";
       button.className = "opt-btn";
+      button.dataset.index = String(index);
       button.textContent = option;
       button.addEventListener("click", () => {
         const isCorrect = index === q.answer;
+        q.userAnswer = index;
         document.querySelectorAll(".opt-btn").forEach((btn) => {
+          const btnIndex = Number(btn.dataset.index);
           btn.disabled = true;
-          if (Number(btn.dataset.index) === q.answer) btn.classList.add("right");
+          btn.classList.toggle("right", btnIndex === q.answer);
+          btn.classList.toggle("wrong", btnIndex === index && !isCorrect);
         });
+
         if (isCorrect) {
           playSfx("correct");
           toast("Đúng rồi!");
@@ -256,11 +261,10 @@
 
         const feedback = document.createElement("div");
         feedback.className = `feedback show ${isCorrect ? "ok" : "no"}`;
-        feedback.innerHTML = `<strong>${isCorrect ? "Đúng" : "Sai"}</strong><br>${q.signal ? `Dấu hiệu: <strong>${esc(q.signal)}</strong> → dùng <strong>${q.tense === "simple" ? "Hiện tại đơn" : "Hiện tại tiếp diễn"}</strong>.` : "Câu này nên dùng thì phù hợp với hành động."}<br><span class="hintline">Công thức: ${q.tense === "simple" ? "S + V / V-s / V-es" : "S + am / is / are + V-ing"}</span>`;
+        feedback.innerHTML = `<strong>${isCorrect ? "Đúng" : "Sai"}</strong><br>${q.signal ? `Dấu hiệu: <strong>${esc(q.signal)}</strong> → dùng <strong>${q.tense === "simple" ? "Hiện tại đơn" : "Hiện tại tiếp diễn"}</strong>.` : "Hãy xem lại cấu trúc câu và dấu hiệu."}`;
         qEl.appendChild(feedback);
         document.getElementById("practice-next").classList.remove("hidden");
       });
-      button.dataset.index = String(index);
       optionsWrap.appendChild(button);
     });
 
@@ -282,7 +286,7 @@
     result.classList.remove("hidden");
     body.innerHTML = "";
 
-    const correctCount = scratch.currentPractice.filter((q, i) => q.userAnswer === q.answer).length;
+    const correctCount = scratch.currentPractice.filter((q) => Number(q.userAnswer) === Number(q.answer)).length;
     score.textContent = `${correctCount}/${scratch.currentPractice.length}`;
     verdict.textContent = correctCount >= 7 ? "Tuyệt vời!" : correctCount >= 5 ? "Khá tốt!" : "Cần ôn lại nhé!";
 
@@ -290,7 +294,7 @@
     scratch.currentPractice.forEach((q, i) => {
       const item = document.createElement("div");
       item.className = "custom-item";
-      item.innerHTML = `<span>${i + 1}. ${esc(q.sentence || q.signal)} — ${q.userAnswer === q.answer ? "✅" : "❌"}</span>`;
+      item.innerHTML = `<span>${i + 1}. ${esc(q.sentence || q.signal)} — ${Number(q.userAnswer) === Number(q.answer) ? "✅" : "❌"}</span>`;
       review.appendChild(item);
     });
   }
@@ -299,15 +303,8 @@
     const current = scratch.currentPractice[scratch.practiceIdx];
     if (!current) return;
 
-    const selected = document.querySelector(".opt-btn.right, .opt-btn.wrong");
-    if (!selected) {
-      current.userAnswer = -1;
-    }
-
-    const chosen = document.querySelector(".opt-btn.right") || document.querySelector(".opt-btn.wrong");
-    if (chosen) {
-      current.userAnswer = Number(chosen.dataset.index);
-    }
+    const chosen = document.querySelector(".opt-btn.wrong") || document.querySelector(".opt-btn.right") || null;
+    current.userAnswer = Number(chosen?.dataset.index ?? current.userAnswer ?? -1);
 
     scratch.practiceIdx += 1;
     if (scratch.practiceIdx >= scratch.currentPractice.length) {
@@ -364,7 +361,7 @@
       for (let i = 0; i < scratch.teamCount; i++) {
         const card = document.createElement("div");
         card.className = "team-edit-card";
-        card.innerHTML = `<div class="team-edit-card"><label>Đội ${i + 1}</label><input type="text" value="Đội ${i + 1}" data-team-index="${i}" /></div>`;
+        card.innerHTML = `<label>Đội ${i + 1}</label><input type="text" value="Đội ${i + 1}" data-team-index="${i}" />`;
         teamEdit.appendChild(card);
       }
     };
@@ -452,8 +449,12 @@
           clearInterval(scratch.timerHandle);
           const isCorrect = Number(btn.dataset.qindex) === q.answer;
           gameBody.querySelectorAll(".opt-btn").forEach((b) => {
+            const isAnswer = Number(b.dataset.qindex) === q.answer;
             b.disabled = true;
-            if (Number(b.dataset.qindex) === q.answer) b.classList.add("right");
+            b.classList.toggle("right", isAnswer);
+            if (!isAnswer && Number(b.dataset.qindex) === Number(btn.dataset.qindex)) {
+              b.classList.add("wrong");
+            }
           });
           if (isCorrect) {
             team.score += 10;
@@ -510,7 +511,7 @@
     const list = document.getElementById("custom-list");
     const renderList = () => {
       const custom = getCustomQuestions();
-      list.innerHTML = custom.length ? custom.map((item, index) => `<div class="custom-item"><span>${index + 1}. ${esc(item.sentence)}</span><button class="btn ghost" type="button" data-remove-index="${index}">Xóa</button></div>`).join("") : "<p class='sub'>Chưa có câu hỏi tùy chỉnh nào.</p>";
+      list.innerHTML = custom.length ? custom.map((item, index) => `<div class="custom-item"><span>${index + 1}. ${esc(item.sentence)}</span><button class="btn ghost" type="button" data-remove-index="${index}">Xóa</button></div>`).join("") : "<div class=\"custom-item\"><span>Chưa có câu hỏi tùy chỉnh nào.</span></div>";
       list.querySelectorAll("[data-remove-index]").forEach((button) => {
         button.addEventListener("click", () => {
           const idx = Number(button.dataset.removeIndex);
