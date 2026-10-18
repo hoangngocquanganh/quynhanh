@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Poppins:wght@500;700&display=swap&subset=vietnamese');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Poppins:wght@500;700&family=Noto+Sans:wght@400;700&display=swap&subset=vietnamese');
 
 /* Modernized styles for Quynhanh - improved contrast, spacing, and responsive layout */
 :root{
@@ -22,17 +22,21 @@
 html,body{height:100%}
 body{
   margin:0;
-  font-family: 'Nunito', Inter, "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Prioritize Vietnamese-capable fonts, fallback to system fonts */
+  font-family: 'Nunito', 'Poppins', 'Noto Sans', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   background: var(--bg-1);
   color: #0f1724;
+  /* smoother rendering for latin + diacritics */
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+  font-variant-ligatures: none; /* avoid ligature issues with some fonts and diacritics */
   line-height:1.45;
   padding-bottom:40px;
   font-size:16px;
 }
 
-h1,h2,h3,.site-title{font-family: 'Poppins', 'Nunito', Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif}
+h1,h2,h3,.site-title{font-family: 'Poppins', 'Nunito', 'Noto Sans', Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif}
 
 a{color:var(--accent); text-decoration:none}
 a:hover{text-decoration:underline}
@@ -63,7 +67,7 @@ button:focus, [role="button"]:focus{outline:2px solid rgba(58,134,255,0.18); bor
 
 /* Tabs */
 .tabs{display:flex;gap:10px;margin-top:12px}
-.tab-btn{flex:1 1 140px;padding:10px 12px;border-radius:12px;background:transparent;border:1px solid transparent;color:var(--muted);font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.tab-btn{flex:1 1 140px;padding:10px 12px;border-radius:12px;background:transparent;border:1px solid transparent;color:var(--muted);font-weight:800;display:inline-flex;align-items:center;justify-content:center}
 .tab-btn:hover{background:rgba(58,134,255,0.06);color:var(--accent)}
 .tab-btn.active{background:linear-gradient(90deg,var(--accent),#5aa0ff);color:#fff;box-shadow:0 8px 24px rgba(58,134,255,0.14)}
 
@@ -95,7 +99,7 @@ main{max-width:1180px;margin:20px auto;padding:0 16px}
 
 /* Flashcards */
 .flash-wrap{display:flex;gap:12px;align-items:center}
-.flash{width:100%;max-width:760px;border-radius:14px;padding:18px;background:linear-gradient(180deg,#ffffff,#f7fbff);box-shadow:0 12px 28px rgba(15,23,42,0.06);border:1px solid rgba(15,23,42,0.04);text-align:left}
+.flash{width:100%;max-width:760px;border-radius:14px;padding:18px;background:linear-gradient(180deg,#ffffff,#f7fbff);box-shadow:0 12px 28px rgba(15,23,42,0.06);border:1px solid rgba(15,23,42,0.04)}
 .flash-inner{display:flex;flex-direction:column;gap:8px}
 .flash-face{display:block}
 .flash-front .sentence{font-weight:800;font-size:1.05rem}
